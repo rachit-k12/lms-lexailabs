@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./lib/styles.css";
+
+body {
+  font-family: var(--tatva-family-matter);
+  background-color: rgb(var(--tatva-background-primary));
+  color: rgb(var(--tatva-content-primary));
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
