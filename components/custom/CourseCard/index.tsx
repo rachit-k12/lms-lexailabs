@@ -76,7 +76,7 @@ function getCtaConfig(state: CourseCardState): { text: string; variant: "primary
 // ============================================================================
 
 function getCardStyles(state: CourseCardState) {
-  const baseStyles = "flex h-full flex-col overflow-hidden rounded-tatva-xl border bg-tatva-background-primary p-tatva-6 transition-all duration-200";
+  const baseStyles = "flex h-full flex-col overflow-hidden rounded-tatva-xl border bg-tatva-background-primary p-tatva-6 transition-colors duration-200";
 
   switch (state) {
     case "not-started":
@@ -193,7 +193,7 @@ export function CourseCard({
           {state === "in-progress" ? (
             <button
               onClick={onStartLearning}
-              className="relative w-full overflow-hidden rounded-tatva-lg border border-blue-200 bg-white py-tatva-3 text-sm font-medium transition-all hover:border-blue-300 backdrop-blur-[3px]"
+              className="relative w-full overflow-hidden rounded-tatva-lg border border-blue-200 bg-white py-tatva-4 text-sm font-medium transition-all hover:border-blue-300 backdrop-blur-[3px]"
               style={{
                 // stronger light blue glass, more visible like blue-400
                 backdropFilter: "blur(10px) saturate(170%)",
@@ -221,42 +221,6 @@ export function CourseCard({
                     "radial-gradient(ellipse 120% 75% at 50% 60%, rgba(255,255,255,1) 70%, rgba(255,255,255,0) 100%)",
                 }}
               >
-                <svg
-                  className="absolute inset-0 w-full h-full pointer-events-none"
-                  viewBox="0 0 360 40"
-                  preserveAspectRatio="none"
-                  aria-hidden="true"
-                >
-                  <defs>
-                    <linearGradient id="liquid-glass-wave" x1="0%" y1="20%" x2="100%" y2="80%">
-                      <stop offset="0%" stopColor="#90cdf4" stopOpacity="0.63" />
-                      <stop offset="70%" stopColor="#60a5fa" stopOpacity="0.32" />
-                      <stop offset="100%" stopColor="#bae6fd" stopOpacity="0.10" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="
-                      M0,35 
-                      Q70,30 120,38 
-                      T240,32
-                      T360,37
-                      L360,50 L0,50 Z
-                    "
-                    fill="url(#liquid-glass-wave)"
-                    fillOpacity="0.6"
-                  />
-                  <path
-                    d="
-                      M0,32
-                      Q60,28 110,34
-                      T220,30
-                      T360,35
-                      L360,50 L0,50 Z
-                    "
-                    fill="#fff"
-                    fillOpacity="0.13"
-                  />
-                </svg>
               </div>
               {/* Button content */}
               <span className="relative z-10 flex items-center justify-center gap-2 text-blue-700">
@@ -269,6 +233,7 @@ export function CourseCard({
           ) : (
             <Button
               variant={ctaConfig.variant}
+              size="lg"
               width="full"
               icon={ctaConfig.icon as any}
               iconPosition="right"

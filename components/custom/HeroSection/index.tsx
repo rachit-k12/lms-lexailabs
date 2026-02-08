@@ -51,14 +51,10 @@ export function HeroSection({
       {/* Background Image (optional) */}
       {backgroundImage && (
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
+          className="absolute inset-0 bg-cover bg-center "
           style={{ backgroundImage: `url(${backgroundImage})` }}
         />
       )}
-
-      {/* Decorative gradient orbs */}
-      <div className="pointer-events-none absolute -left-40 -top-40 size-80 rounded-full bg-tatva-brand-primary/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 size-80 rounded-full bg-tatva-orange-200/20 blur-3xl" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-4xl text-center">

@@ -69,7 +69,7 @@ export interface NavbarProps {
 // ============================================================================
 
 const navbarVariants = cva(
-  "w-full px-tatva-8 py-tatva-4 transition-all duration-200",
+  "w-full px-tatva-16 py-tatva-8 transition-all duration-200",
   {
     variants: {
       variant: {

@@ -18,8 +18,12 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Lex AI LMS - Learning Management System",
-  description: "Master AI skills with Lex AI - A modern learning platform",
+  title: "LexAI Labs - Learn AI from Industry Experts",
+  description: "Master AI skills with LexAI Labs - A modern learning platform for Machine Learning, Deep Learning, and AI",
+  icons: {
+    icon: "/lexai-logo.png",
+    apple: "/lexai-logo.png",
+  },
 };
 
 export default function RootLayout({

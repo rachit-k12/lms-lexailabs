@@ -33,6 +33,8 @@ export interface InstructorSectionProps {
   role: string;
   /** Instructor bio/description */
   bio: string;
+  /** Bio bullet points for better readability */
+  bioPoints?: string[];
   /** Instructor avatar URL */
   avatar?: string;
   /** Company/Organization (e.g., "Co-founder of Lex AI Labs") */
@@ -95,6 +97,7 @@ export function InstructorSection({
   name,
   role,
   bio,
+  bioPoints = [],
   avatar,
   company,
   credentials = [],
@@ -108,7 +111,7 @@ export function InstructorSection({
         className
       )}
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         {/* Section Header */}
         <div className="mb-tatva-16 text-center">
           <Text variant="heading-lg">
@@ -145,7 +148,7 @@ export function InstructorSection({
             {/* Name and Role */}
             <div className="mb-tatva-3 flex flex-col items-center gap-tatva-4 md:flex-row">
               <Text variant="heading-md">{name}</Text>
-              <Badge variant="brand" size="sm">
+              <Badge variant="brand" size="md">
                 {role}
               </Badge>
             </div>
@@ -160,10 +163,23 @@ export function InstructorSection({
             )}
 
             {/* Bio */}
-            <div className="mb-tatva-8">
-              <Text variant="body-md" tone="secondary">
-                {bio}
-              </Text>
+            <div className="my-tatva-8">
+              {bioPoints.length > 0 ? (
+                <ul className="space-y-3">
+                  {bioPoints.map((point, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-gray-400" />
+                      <Text variant="body-md" tone="secondary">
+                        {point}
+                      </Text>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Text variant="body-md" tone="secondary">
+                  {bio}
+                </Text>
+              )}
             </div>
 
             {/* Credentials - Colorful badges */}
@@ -179,7 +195,7 @@ export function InstructorSection({
                     <Badge
                       key={index}
                       variant={getCredentialVariant(index)}
-                      size="md"
+                      size="lg"
                     >
                       {credential}
                     </Badge>

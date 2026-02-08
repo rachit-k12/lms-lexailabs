@@ -72,8 +72,8 @@ export default function CoursesPage() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-4">
             Explore Our Courses
           </h1>
-          <Text variant="body-lg" tone="secondary" className="max-w-4xl">
-            Master the skills that matter in today&apos;s AI-driven world. Our comprehensive courses are designed by industry practitioners who understand what it takes to build production-ready systems. Whether you&apos;re an engineer looking to dive deep into machine learning, or a business leader seeking to understand AI strategy, we have the right path for you.
+          <Text variant="body-lg" tone="secondary" className="max-w-7xl">
+            Master the skills that matter in today&apos;s AI-driven world. Our comprehensive courses are designed by industry practitioners who understand what it takes to build production-ready systems. 
           </Text>
         </div>
       </section>

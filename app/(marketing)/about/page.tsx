@@ -34,10 +34,10 @@ export default function AboutPage() {
           </div>
           <div className="space-y-6">
             {[
-              { icon: "users" as const, title: "50,000+", description: "Students trained worldwide" },
+              { icon: "chat-multiple" as const, title: "50,000+", description: "Students trained worldwide" },
               { icon: "audio-book" as const, title: "8", description: "Comprehensive courses" },
-              { icon: "star" as const, title: "4.9/5", description: "Average course rating" },
-              { icon: "building" as const, title: "100+", description: "Companies hire our alumni" },
+              { icon: "favourite" as const, title: "4.9/5", description: "Average course rating" },
+              { icon: "briefcase" as const, title: "100+", description: "Companies hire our alumni" },
             ].map((stat) => (
               <div key={stat.title} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50">
                 <div className="size-12 rounded-xl bg-lms-primary-50 flex items-center justify-center">
@@ -57,9 +57,10 @@ export default function AboutPage() {
           name={instructor.name}
           role={instructor.role}
           bio={instructor.bio}
+          bioPoints={instructor.bioPoints}
           avatar={instructor.avatar}
           credentials={instructor.credentials}
-                  />
+        />
       </div>
     </main>
   );

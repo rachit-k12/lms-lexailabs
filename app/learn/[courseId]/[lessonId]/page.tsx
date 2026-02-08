@@ -158,8 +158,8 @@ export default function LearningView({ params }: LearningViewProps) {
 
   return (
     <div className="flex h-screen bg-white">
-      {/* Left Sidebar - Module Timeline (30%) - Hidden on mobile */}
-      <div className="hidden md:flex md:w-[30%] flex-col border-r border-gray-200 bg-white">
+      {/* Left Sidebar - Module Timeline (25%) - Hidden on mobile */}
+      <div className="hidden md:flex md:w-[25%] flex-col border-r border-gray-200 bg-white">
         {/* Back to course header */}
         <div className="p-4 border-b border-gray-200">
           <Link
@@ -185,8 +185,8 @@ export default function LearningView({ params }: LearningViewProps) {
         </div>
       </div>
 
-      {/* Center Content (45%) */}
-      <div className="flex-1 md:w-[45%] overflow-y-auto">
+      {/* Center Content (50%) */}
+      <div className="flex-1 md:w-[50%] overflow-y-auto">
         {/* Mobile Header */}
         <div className="md:hidden sticky top-0 z-10 bg-white border-b border-gray-200 p-4">
           <Link
@@ -229,11 +229,6 @@ export default function LearningView({ params }: LearningViewProps) {
               />
             </div>
           )}
-
-          {/* Lesson Title as Notes Header */}
-          <div className="mb-6">
-            <Text variant="heading-md">{lesson.title}</Text>
-          </div>
 
           {/* Markdown Content */}
           <div className="prose prose-lg max-w-none mb-8">

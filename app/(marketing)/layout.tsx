@@ -18,11 +18,11 @@ export default function MarketingLayout({
   ];
 
   return (
-    <div className="mx-auto max-w-[1920px]">
+    <div className="w-full">
       {isHomePage ? (
-        // On homepage, navbar is absolutely positioned over hero
-        <div className="relative">
-          <div className="absolute top-0 left-0 right-0 z-50">
+        // On homepage, navbar is fixed at top
+        <>
+          <div className="fixed top-0 left-0 right-0 z-50">
             <LmsNavbar
               navItems={navItems}
               onGetStarted={() => router.push("/signup")}
@@ -31,17 +31,21 @@ export default function MarketingLayout({
             />
           </div>
           {children}
-        </div>
+        </>
       ) : (
-        // On other pages, navbar is in normal flow
+        // On other pages, navbar is fixed at top with background
         <>
-          <LmsNavbar
-            navItems={navItems}
-            onGetStarted={() => router.push("/signup")}
-            onLogin={() => router.push("/login")}
-            variant="default"
-          />
-          {children}
+          <div className="fixed top-0 left-0 right-0 z-50">
+            <LmsNavbar
+              navItems={navItems}
+              onGetStarted={() => router.push("/signup")}
+              onLogin={() => router.push("/login")}
+              variant="default"
+            />
+          </div>
+          <div className="pt-16">
+            {children}
+          </div>
         </>
       )}
       <Footer />

@@ -16,22 +16,23 @@ import { getFeaturedCourses, instructor, courses } from "@/lib/data";
 
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white">
-      {/* Background Image with 50% opacity */}
-      <div className="absolute inset-0 pointer-events-none">
+    <section className="relative w-full min-w-full overflow-hidden bg-white">
+      {/* Background Image with opacity */}
+      <div className="absolute inset-0 pointer-events-none w-full">
         <Image
           src="/hero-section-bg.png"
           alt=""
           fill
-          className="object-cover opacity-40"
+          className="object-cover object-center opacity-40"
           priority
+          sizes="100vw"
         />
         {/* Bottom fade to white for smooth transition */}
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white via-white/80 to-transparent" />
       </div>
 
-      {/* Subtle Gradient Glow Effects - Like Ample Market */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Subtle Gradient Glow Effects - Desktop only */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block">
         {/* Left pink/coral glow */}
         <div className="absolute -top-20 -left-20 size-[500px] rounded-full bg-gradient-to-br from-pink-200/60 via-lms-coral-200/40 to-orange-100/30 blur-3xl" />
         {/* Right blue glow */}
@@ -44,7 +45,7 @@ function HeroSection() {
         {/* Centered Content */}
         <div className="text-center max-w-4xl mx-auto">
           {/* NEW Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 border border-gray-200 px-1 py-1 pr-4 mb-8">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white border border-gray-200 px-1 py-1 pr-4 mb-8 shadow-sm">
             <span className="rounded-full bg-gray-900 px-2.5 py-0.5 text-xs font-semibold text-white">
               NEW
             </span>
@@ -85,8 +86,8 @@ function HeroSection() {
 
         {/* Course Page Image - Floating Product Image */}
         <div className="relative max-w-5xl mx-auto mt-8">
-          {/* Gradient glow behind image */}
-          <div className="absolute -inset-4 rounded-[32px] bg-gradient-to-br from-lms-primary-200/40 via-purple-100/30 to-lms-coral-200/40 blur-2xl" />
+          {/* Gradient glow behind image - Desktop only */}
+          <div className="absolute -inset-4 rounded-[32px] bg-gradient-to-br from-lms-primary-200/40 via-purple-100/30 to-lms-coral-200/40 blur-2xl hidden lg:block" />
 
           {/* Image Container with modern styling */}
           <div className="relative">
@@ -237,10 +238,7 @@ function TrustedBySection() {
   ];
 
   return (
-    <section className="relative py-16 bg-gradient-to-b from-transparent via-white/80 to-white border-b border-gray-100 overflow-hidden">
-      {/* Blend with hero background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50/0 to-white pointer-events-none" />
-
+    <section className="relative py-16 bg-white border-b border-gray-100 overflow-hidden">
       <div className="relative">
         <Text variant="body-sm" tone="tertiary" className="text-center mb-8">
           Our alumni work at leading companies worldwide
@@ -442,7 +440,8 @@ function TestimonialsSection() {
       name: "Abhinav Srivastava",
       initials: "AS",
       role: "Consultant, Deloitte",
-      content: "Puru has a way of making machine learning feel less like rocket science and more like a conversation. During my time at the LexAI Fellowship, he made topics that usually seem intimidating feel surprisingly manageable.",
+      content:
+        "Puru made machine learning easy to grasp. He turned complex topics into clear, manageable lessons throughout LexAI Fellowship.",
       achievement: "Built production ML confidence",
       avatarColor: "bg-lms-coral-400",
     },
@@ -450,7 +449,8 @@ function TestimonialsSection() {
       name: "Maneet Kaur Bagga",
       initials: "MK",
       role: "UX Researcher, MathWorks",
-      content: "His mentoring and teaching abilities are truly outstanding, especially his approach of focusing on practical, industry-applicable knowledge. He equipped me with real-world Machine Learning skills and insights needed to thrive.",
+      content:
+        "With Puru's practical teaching, I gained real-world ML skills that made a difference in my career.",
       achievement: "Accelerated career trajectory",
       avatarColor: "bg-amber-500",
     },
@@ -458,14 +458,15 @@ function TestimonialsSection() {
       name: "Rahul Mehta",
       initials: "RM",
       role: "ML Engineer, Google",
-      content: "I've had the privilege of learning with Puru and his Machine Learning expertise and ability to simplify complex concepts in a way that makes them intuitive is truly remarkable. Highly recommended for anyone serious about AI.",
+      content:
+        "Learning ML with Puru was intuitive. He truly makes advanced concepts accessible for anyone serious about AI.",
       achievement: "Transformed career path",
       avatarColor: "bg-lms-primary-500",
     },
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-white">
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center mb-12">
           <Text variant="heading-lg" className="mb-4">
@@ -476,32 +477,32 @@ function TestimonialsSection() {
           </Text>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-3">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+              className="group flex flex-col rounded-3xl bg-white p-5 border border-tatva-border transition-all duration-300"
             >
-              {/* Quote Icon - Smaller */}
+              {/* Quote Icon */}
               <div className="mb-4">
-                <svg width="24" height="20" viewBox="0 0 40 32" fill="none" className="text-gray-300">
-                  <path d="M0 20.8C0 13.0667 2.13333 7.46667 6.4 4C10.6667 0.533333 15.4667 -0.8 20.8 0L21.6 4.8C17.0667 5.06667 13.6 6.13333 11.2 8C8.8 9.86667 7.6 12.5333 7.6 16V16.8H18.4V32H0V20.8ZM21.6 20.8C21.6 13.0667 23.7333 7.46667 28 4C32.2667 0.533333 37.0667 -0.8 42.4 0L43.2 4.8C38.6667 5.06667 35.2 6.13333 32.8 8C30.4 9.86667 29.2 12.5333 29.2 16V16.8H40V32H21.6V20.8Z" fill="currentColor"/>
-                </svg>
+                  <svg width="18" height="14" viewBox="0 0 40 32" fill="none" className="text-lms-primary-500">
+                    <path d="M0 20.8C0 13.0667 2.13333 7.46667 6.4 4C10.6667 0.533333 15.4667 -0.8 20.8 0L21.6 4.8C17.0667 5.06667 13.6 6.13333 11.2 8C8.8 9.86667 7.6 12.5333 7.6 16V16.8H18.4V32H0V20.8ZM21.6 20.8C21.6 13.0667 23.7333 7.46667 28 4C32.2667 0.533333 37.0667 -0.8 42.4 0L43.2 4.8C38.6667 5.06667 35.2 6.13333 32.8 8C30.4 9.86667 29.2 12.5333 29.2 16V16.8H40V32H21.6V20.8Z" fill="currentColor"/>
+                  </svg>
               </div>
 
               {/* Testimonial Content */}
               <Text variant="body-sm" className="text-gray-600 leading-relaxed flex-1 mb-4">
-                &ldquo;{testimonial.content}&rdquo;
+                {testimonial.content}
               </Text>
 
-              {/* Author - Compact */}
-              <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                <div className={`size-10 rounded-full ${testimonial.avatarColor} flex items-center justify-center`}>
-                  <span className="text-white font-semibold text-xs">{testimonial.initials}</span>
+              {/* Author */}
+              <div className="flex items-center gap-3">
+                <div className={`size-11 rounded-full ${testimonial.avatarColor} flex items-center justify-center shadow-sm`}>
+                  <span className="text-white font-semibold text-sm">{testimonial.initials}</span>
                 </div>
-                <div>
-                  <Text variant="label-sm">{testimonial.name}</Text>
-                  <Text variant="body-xs" tone="tertiary">{testimonial.role}</Text>
+                <div className="flex flex-col">
+                  <Text variant="label-sm" className="text-gray-900">{testimonial.name}</Text>
+                  <Text variant="body-xs" tone="tertiary" className="mt-0.5">{testimonial.role}</Text>
                 </div>
               </div>
             </div>
@@ -526,6 +527,7 @@ export default function HomePage() {
         name={instructor.name}
         role={instructor.role}
         bio={instructor.bio}
+        bioPoints={instructor.bioPoints}
         avatar={instructor.avatar}
         credentials={instructor.credentials}
       />

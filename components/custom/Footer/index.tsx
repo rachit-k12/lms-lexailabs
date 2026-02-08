@@ -49,32 +49,29 @@ export interface FooterProps {
 // Default Data - LMS Specific
 // ============================================================================
 
+const platformLinks: FooterLink[] = [
+  { label: "All Courses", href: "/courses" },
+  { label: "Engineering", href: "/courses?category=engineering" },
+  { label: "Non-Engineering", href: "/courses?category=non-engineering" },
+  { label: "My Learning", href: "/my-learning" },
+];
+
+const resourceLinks: FooterLink[] = [
+  { label: "Help Center", href: "/help" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contact Us", href: "/contact" },
+];
+
+const legalLinks: FooterLink[] = [
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Refund Policy", href: "/refund-policy" },
+];
+
 const defaultSections: FooterSection[] = [
-  {
-    title: "Platform",
-    links: [
-      { label: "All Courses", href: "/courses" },
-      { label: "Engineering", href: "/courses?category=engineering" },
-      { label: "Non-Engineering", href: "/courses?category=non-engineering" },
-      { label: "My Learning", href: "/my-learning" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Help Center", href: "/help" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Contact Us", href: "/contact" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Terms of Service", href: "/terms" },
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Refund Policy", href: "/refund-policy" },
-    ],
-  },
+  { title: "Platform", links: platformLinks },
+  { title: "Resources", links: resourceLinks },
+  { title: "Legal", links: legalLinks },
 ];
 
 const defaultContact: FooterContact = {
@@ -129,9 +126,10 @@ export function Footer({
     >
       {/* Main Footer Content */}
       <div className="mx-auto max-w-7xl px-tatva-8 py-tatva-16">
-        <div className="grid grid-cols-1 gap-tatva-12 sm:grid-cols-2 lg:grid-cols-5">
+        {/* Desktop Layout - Grid with brand on left, links on right */}
+        <div className="hidden lg:grid lg:grid-cols-5 lg:gap-tatva-12">
           {/* Brand Section */}
-          <div className="sm:col-span-2">
+          <div className="col-span-2">
             <div className="mb-tatva-8">
               <Link href="/" className="inline-block">
                 <Image
@@ -145,7 +143,7 @@ export function Footer({
             </div>
             <div className="mb-tatva-6 max-w-xs">
               <Text variant="body-sm" tone="secondary">
-                Master AI skills with industry experts. Learn at your own pace with practical, real-world courses.
+                Master AI skills with industry experts. Learn at your own pace with real-world courses.
               </Text>
             </div>
 
@@ -194,6 +192,76 @@ export function Footer({
               </ul>
             </div>
           ))}
+        </div>
+
+        {/* Mobile Layout - All Centered */}
+        <div className="flex flex-col items-center text-center lg:hidden">
+          {/* Logo */}
+          <div className="mb-6 flex justify-center w-full">
+            <Link href="/">
+              <Image
+                src="/lexai-logo.png"
+                alt="Lex AI Labs"
+                width={80}
+                height={80}
+                className="size-20 object-contain"
+              />
+            </Link>
+          </div>
+
+          {/* Tagline */}
+          <div className="mb-8 max-w-md text-center">
+            <Text variant="body-sm" tone="secondary">
+              Master AI skills with industry experts. Learn at your own pace with real-world courses.
+            </Text>
+          </div>
+
+          {/* Social Icons */}
+          <div className="group/socials flex justify-center gap-2 mb-12 w-full">
+            {socials.map((social, index) => (
+              <a
+                key={index}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-60 transition-opacity duration-200 hover:!opacity-100 group-hover/socials:opacity-40"
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon={getSocialIconName(social.platform)}
+                  tooltip={social.platform.charAt(0).toUpperCase() + social.platform.slice(1)}
+                />
+              </a>
+            ))}
+          </div>
+
+          {/* All Sections - Stacked vertically, centered */}
+          <div className="w-full space-y-10 mb-12">
+            {sections.map((section, index) => (
+              <div key={index} className="text-center">
+                <div className="mb-4 uppercase tracking-wider">
+                  <Text variant="label-sm" tone="default">
+                    {section.title}
+                  </Text>
+                </div>
+                <ul className="space-y-3">
+                  {section.links.map((link, linkIndex) => (
+                    <li key={linkIndex}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-500 hover:text-gray-900 transition-colors"
+                      >
+                        <Text variant="body-sm" tone="secondary">
+                          {link.label}
+                        </Text>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -44,6 +44,7 @@ export interface Instructor {
   name: string;
   role: string;
   bio: string;
+  bioPoints?: string[];
   avatar: string;
   credentials: string[];
   socialLinks?: {
@@ -58,20 +59,26 @@ export interface Instructor {
 // ============================================================================
 
 export const instructor: Instructor = {
-  name: "Puru Govind",
-  role: "Co-founder, LexAI Labs",
-  bio: "Puru is a seasoned AI researcher and educator with over 10 years of experience in machine learning and artificial intelligence. He has worked at leading tech companies and has trained thousands of students worldwide.",
+  name: "Puru Kathuria",
+  role: "Founder, Lex AI Labs | SWE at Google",
+  bio: "Backend Engineer at Google working on Distributed Systems and AI",
+  bioPoints: [
+    "At Google, works on Backend Engineering, Distributed Systems, and AI for Cloud Security products",
+    "Teaches Applied AI (Machine Learning, Deep Learning, LLMs) at LexAI Labs",
+    "Previously at MathWorks, focused on self-driving cars, motion planning, and speech recognition",
+    "Founded a Deep Learning Book Club, fostering a community of learners",
+  ],
   avatar: "https://media.licdn.com/dms/image/v2/D4D03AQGQtno9QlQ5ug/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1715758859402?e=1772064000&v=beta&t=GOyIYDDytPLCRWdXEWX_4s5XF4RBY9WtlpxIdeBwg7g",
   credentials: [
-    "Ph.D. in Computer Science from IIT Delhi",
-    "Former AI Research Lead at Google",
-    "Published 50+ research papers in top conferences",
+    "M.Tech in ML & AI from IIIT Delhi",
+    "Software Engineer at Google",
+    "Former SWE at MathWorks",
     "Trained 10,000+ students globally",
   ],
   socialLinks: {
-    linkedin: "https://linkedin.com/in/purugovind",
-    twitter: "https://twitter.com/purugovind",
-    github: "https://github.com/purugovind",
+    linkedin: "https://linkedin.com/in/purukathuria",
+    twitter: "https://twitter.com/purukathuria",
+    github: "https://github.com/purukathuria",
   },
 };
 

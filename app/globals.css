@@ -249,7 +249,7 @@
 }
 
 /* ========================================
- * Custom Scrollbar - Auto-hide overlay style
+ * Custom Scrollbar - Auto-hide on scroll stop
  * ======================================== */
 html {
   overflow-y: scroll;
@@ -264,9 +264,10 @@ html {
   }
 }
 
+/* Thin scrollbar that fades */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -274,22 +275,37 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0);
+  border-radius: 3px;
+  transition: background 0.3s ease;
 }
 
-::-webkit-scrollbar-thumb:hover {
+/* Show scrollbar on hover of scrollable area */
+*:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+*:hover::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
+}
+
+/* Show scrollbar when actively scrolling */
+.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2) !important;
 }
 
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* Firefox thin scrollbar */
+/* Firefox - auto-hide scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
 .scrollbar-hide {

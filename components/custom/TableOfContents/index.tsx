@@ -107,7 +107,7 @@ export function TableOfContents({
               <button
                 onClick={() => handleClick(item.id)}
                 className={cn(
-                  "block w-full text-left py-tatva-2 transition-colors",
+                  "block w-full text-left py-tatva-2 transition-colors cursor-pointer",
                   indent,
                   isActive
                     ? "text-tatva-brand-primary"

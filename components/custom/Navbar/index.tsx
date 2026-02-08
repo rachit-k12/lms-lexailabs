@@ -69,12 +69,13 @@ export function Navbar({
   return (
     <nav
       className={cn(
-        "flex items-center justify-between px-tatva-10 py-tatva-5",
+        "w-full",
         variant === "default" && "border-b border-tatva-border bg-tatva-background-primary",
         variant === "transparent" && "bg-transparent",
         className
       )}
     >
+      <div className="mx-auto w-full max-w-9xl flex items-center justify-between px-tatva-20 py-tatva-10">
       {/* Left: Logo + Nav Items */}
       <div className="flex items-center gap-tatva-12">
         {/* Logo */}
@@ -156,6 +157,7 @@ export function Navbar({
             </Button>
           </div>
         )}
+      </div>
       </div>
     </nav>
   );
