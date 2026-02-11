@@ -3,19 +3,44 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { Text, Button } from "@/components";
+import { useAuth } from "@/lib/contexts/auth-context";
+import { getGoogleLoginUrl, getErrorMessage } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { login } = useAuth();
+  const searchParams = useSearchParams();
+
+  // Check for verification success or error from email verification
+  const verified = searchParams.get("verified");
+  const verifyError = searchParams.get("error");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate login
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsLoading(false);
+    setError(null);
+
+    try {
+      await login({ email, password });
+      toast.success("Welcome back!");
+    } catch (err) {
+      const message = getErrorMessage(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = getGoogleLoginUrl();
   };
 
   return (
@@ -48,8 +73,35 @@ export default function LoginPage() {
               </Text>
             </div>
 
+            {/* Verification Messages */}
+            {verified === "true" && (
+              <div className="mb-6 rounded-lg bg-green-50 p-4 text-sm text-green-800">
+                Email verified successfully! You can now sign in.
+              </div>
+            )}
+            {verifyError === "token_expired" && (
+              <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-800">
+                Verification link has expired. Please request a new one.
+              </div>
+            )}
+            {verifyError === "invalid_token" && (
+              <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-800">
+                Invalid verification link. Please try again.
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-800">
+                {error}
+              </div>
+            )}
+
             {/* Google Sign In */}
-            <button className="mb-6 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+            <button
+              onClick={handleGoogleLogin}
+              className="mb-6 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            >
               <svg className="size-5" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -94,6 +146,7 @@ export default function LoginPage() {
                   placeholder="you@example.com"
                   className="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-lms-primary-500 focus:outline-none focus:ring-1 focus:ring-lms-primary-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -108,6 +161,7 @@ export default function LoginPage() {
                   placeholder="Enter your password"
                   className="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-lms-primary-500 focus:outline-none focus:ring-1 focus:ring-lms-primary-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 

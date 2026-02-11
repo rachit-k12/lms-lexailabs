@@ -3,16 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Text, Button } from "@/components";
+import { useAuth } from "@/lib/contexts/auth-context";
+import { getGoogleLoginUrl, getErrorMessage } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    jobTitle: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const { register } = useAuth();
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,10 +29,64 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate signup
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsLoading(false);
+    setError(null);
+
+    try {
+      const response = await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      setSuccess(true);
+      toast.success(response.message || "Account created! Please check your email to verify.");
+    } catch (err) {
+      const message = getErrorMessage(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const handleGoogleSignup = () => {
+    window.location.href = getGoogleLoginUrl();
+  };
+
+  if (success) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-8">
+        <div className="mx-auto max-w-md text-center">
+          <div className="mb-6 inline-flex size-16 items-center justify-center rounded-full bg-green-100">
+            <svg
+              className="size-8 text-green-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <Text variant="heading-lg" className="mb-3">
+            Check your email
+          </Text>
+          <Text variant="body-md" tone="secondary" className="mb-8">
+            We&apos;ve sent a verification link to <strong>{formData.email}</strong>.
+            Click the link in the email to verify your account.
+          </Text>
+          <Link href="/login">
+            <Button variant="primary" size="lg">
+              Go to Sign In
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -56,8 +118,18 @@ export default function SignupPage() {
               </Text>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-800">
+                {error}
+              </div>
+            )}
+
             {/* Google Sign Up */}
-            <button className="mb-6 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+            <button
+              onClick={handleGoogleSignup}
+              className="mb-6 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            >
               <svg className="size-5" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -103,36 +175,23 @@ export default function SignupPage() {
                   placeholder="John Doe"
                   className="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-lms-primary-500 focus:outline-none focus:ring-1 focus:ring-lms-primary-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Work Email
+                  Email
                 </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="you@company.com"
+                  placeholder="you@example.com"
                   className="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-lms-primary-500 focus:outline-none focus:ring-1 focus:ring-lms-primary-500"
                   required
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Job Title
-                </label>
-                <input
-                  type="text"
-                  name="jobTitle"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                  placeholder="Software Engineer"
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-lms-primary-500 focus:outline-none focus:ring-1 focus:ring-lms-primary-500"
-                  required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -149,6 +208,7 @@ export default function SignupPage() {
                   className="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-lms-primary-500 focus:outline-none focus:ring-1 focus:ring-lms-primary-500"
                   required
                   minLength={8}
+                  disabled={isLoading}
                 />
                 <p className="mt-1.5 text-xs text-gray-400">
                   Must be at least 8 characters

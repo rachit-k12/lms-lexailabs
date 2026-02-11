@@ -13,7 +13,8 @@ import type { IconName } from "@/ui/lib/icons";
 export interface TimelineLesson {
   id: string;
   title: string;
-  duration: string;
+  /** Duration in minutes (number) or formatted string (e.g., "10 min") */
+  duration?: string | number;
   type: "video" | "article" | "quiz";
   isCompleted?: boolean;
   isLocked?: boolean;
@@ -88,11 +89,24 @@ function getLessonTypeColor(type: TimelineLesson["type"]): string {
   }
 }
 
+function formatDuration(duration: string | number | undefined): string {
+  if (duration === undefined || duration === null) return "";
+  if (typeof duration === "number") {
+    return duration > 0 ? `${duration} min` : "";
+  }
+  return duration;
+}
+
 function calculateModuleStats(lessons: TimelineLesson[]) {
   const totalLessons = lessons.length;
   const completedLessons = lessons.filter((l) => l.isCompleted).length;
   const totalMinutes = lessons.reduce((acc, lesson) => {
-    const match = lesson.duration.match(/(\d+)/);
+    // Handle duration as number or string
+    if (typeof lesson.duration === "number") {
+      return acc + lesson.duration;
+    }
+    const duration = lesson.duration || "";
+    const match = duration.match(/(\d+)/);
     return acc + (match ? parseInt(match[1], 10) : 0);
   }, 0);
 
@@ -380,9 +394,11 @@ export function ModuleTimeline({
                         </div>
 
                         {/* Duration only */}
-                        <Text variant="body-xs" tone="tertiary" className="shrink-0">
-                          {lesson.duration}
-                        </Text>
+                        {lesson.duration && (
+                          <Text variant="body-xs" tone="tertiary" className="shrink-0">
+                            {formatDuration(lesson.duration)}
+                          </Text>
+                        )}
                       </button>
                     );
                   })}

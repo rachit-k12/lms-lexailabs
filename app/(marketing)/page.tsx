@@ -1,14 +1,18 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
   Text,
   Button,
-  Badge,
   Icon,
   CourseCard,
   InstructorSection,
 } from "@/components";
-import { getFeaturedCourses, instructor, courses } from "@/lib/data";
+import { getFeaturedCourses, getCourses } from "@/lib/api";
+import type { CourseListItem } from "@/lib/api";
+import { instructor } from "@/lib/data";
 
 // ============================================================================
 // Hero Section - Ample Market Style (Clean, Centered)
@@ -44,28 +48,17 @@ function HeroSection() {
       <div className="relative mx-auto max-w-7xl px-6 pt-28 pb-8">
         {/* Centered Content */}
         <div className="text-center max-w-4xl mx-auto">
-          {/* NEW Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full bg-white border border-gray-200 px-1 py-1 pr-4 mb-8 shadow-sm">
-            <span className="rounded-full bg-gray-900 px-2.5 py-0.5 text-xs font-semibold text-white">
-              NEW
-            </span>
-            <span className="text-sm text-gray-600">
-              AI Product Management Course
-            </span>
-            <Icon name="arrow-right" size="xs" className="text-gray-400" />
-          </div>
-
           {/* Main Heading */}
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl xl:text-7xl mb-6">
-            Master the Future
+            Build AI capability
             <br />
-            of AI Learning
+            <span className="text-lms-primary-600">for yourself</span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-10">
-            Learn from industry experts and gain practical skills in machine learning,
-            deep learning, and AI applications with our comprehensive courses.
+            Learn from industry experts and gain practical skills in Machine Learning,
+            Deep Learning, Generative AI, and AI Applications with our comprehensive course suite.
           </p>
 
           {/* CTA Buttons */}
@@ -118,9 +111,13 @@ function HeroSection() {
 // Featured Courses Section
 // ============================================================================
 
-function FeaturedCoursesSection() {
-  const featuredCourses = getFeaturedCourses(3);
+interface FeaturedCoursesSectionProps {
+  courses: CourseListItem[];
+  totalCourses: number;
+  isLoading: boolean;
+}
 
+function FeaturedCoursesSection({ courses, totalCourses, isLoading }: FeaturedCoursesSectionProps) {
   return (
     <section className="py-20 bg-white">
       <div className="mx-auto max-w-7xl px-6">
@@ -138,25 +135,40 @@ function FeaturedCoursesSection() {
           </Text>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {featuredCourses.map((course) => (
-            <Link key={course.id} href={`/courses/${course.id}`}>
-              <CourseCard
-                title={course.title}
-                description={course.description}
-                image={course.thumbnail}
-                badge={course.level}
-                studentsCount={course.studentsCount}
-                coursesCount={course.modules.reduce((acc, m) => acc + m.lessons.length, 0)}
-              />
-            </Link>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse rounded-xl border border-gray-200 bg-white overflow-hidden">
+                <div className="aspect-video bg-gray-200" />
+                <div className="p-5 space-y-3">
+                  <div className="h-4 w-20 rounded bg-gray-200" />
+                  <div className="h-5 w-3/4 rounded bg-gray-200" />
+                  <div className="h-4 w-full rounded bg-gray-200" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {courses.map((course) => (
+              <Link key={course.id} href={`/courses/${course.slug}`}>
+                <CourseCard
+                  title={course.title}
+                  description={course.shortDescription || course.description}
+                  image={course.thumbnail}
+                  badge={course.level}
+                  studentsCount={course.studentsCount}
+                  coursesCount={course.totalLessons}
+                />
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-12">
           <Link href="/courses">
             <Button variant="outline" size="lg" icon="arrow-right" iconPosition="right">
-              {`View All ${courses.length} Courses`}
+              {`View All ${totalCourses} Courses`}
             </Button>
           </Link>
         </div>
@@ -191,16 +203,16 @@ function SubscriptionSection() {
             Unlock All Courses
           </Text>
           <Text variant="body-lg" className="text-white/80 max-w-2xl mx-auto mb-8">
-            Get unlimited access to all {courses.length} courses, hands-on projects, quizzes,
-            and certificates. Learn at your own pace with lifetime access.
+            Get unlimited access to all courses, hands-on projects, quizzes,
+            and certificates. Learn at your own pace.
           </Text>
 
           <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
             {[
               "All courses included",
-              "Lifetime access",
-              "Certificates included",
-              "New courses added monthly",
+              "Hands-on projects",
+              "Learn at your own pace",
+              "New courses added quarterly",
             ].map((item) => (
               <div key={item} className="flex items-center gap-2">
                 <div className="size-5 rounded-full bg-green-500/20 flex items-center justify-center">
@@ -230,11 +242,13 @@ function SubscriptionSection() {
 function TrustedBySection() {
   const companies = [
     { name: "Google", logo: "/logos/google.png" },
-    { name: "Microsoft", logo: "/logos/microsoft.png" },
     { name: "Amazon", logo: "/logos/amazon.png" },
-    { name: "Oracle", logo: "/logos/oracle.png" },
-    { name: "Meesho", logo: "/logos/meesho.png" },
-    { name: "Demandbase", logo: "/logos/demandbase.png" },
+    { name: "Qualcomm", logo: "/logos/qualcomm.png" },
+    { name: "PwC", logo: "/logos/pwc.png" },
+    { name: "Flipkart", logo: "/logos/flipkart.png" },
+    { name: "MathWorks", logo: "/logos/mathworks.png" },
+    { name: "IIT Gandhinagar", logo: "/logos/iitgandhinagar.png" },
+    { name: "IIT Hyderabad", logo: "/logos/iithyderabad.png" },
   ];
 
   return (
@@ -417,10 +431,10 @@ function PersonasSection() {
 
               {/* CTA */}
               <div className="mt-6 pt-4 border-t border-gray-100">
-                <button className="group/btn flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/courses" className="group/btn flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
                   <span>Explore courses</span>
                   <Icon name="arrow-right" size="xs" className="transition-transform group-hover/btn:translate-x-1" />
-                </button>
+                </Link>
               </div>
             </div>
           ))}
@@ -518,11 +532,45 @@ function TestimonialsSection() {
 // ============================================================================
 
 export default function HomePage() {
+  const [featuredCourses, setFeaturedCourses] = useState<CourseListItem[]>([]);
+  const [totalCourses, setTotalCourses] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchCourses() {
+      try {
+        // Try to fetch featured courses first
+        const featuredData = await getFeaturedCourses();
+        setFeaturedCourses(featuredData.courses);
+        // Also get total count from regular courses endpoint
+        const allCoursesData = await getCourses({ limit: 1 });
+        setTotalCourses(allCoursesData.pagination.total);
+      } catch {
+        // Fallback to regular courses if featured endpoint fails
+        try {
+          const coursesData = await getCourses({ limit: 3 });
+          setFeaturedCourses(coursesData.courses);
+          setTotalCourses(coursesData.pagination.total);
+        } catch {
+          // Silently fail - show empty state
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchCourses();
+  }, []);
+
   return (
     <main>
       <HeroSection />
       <TrustedBySection />
-      <FeaturedCoursesSection />
+      <FeaturedCoursesSection
+        courses={featuredCourses}
+        totalCourses={totalCourses}
+        isLoading={isLoading}
+      />
       <InstructorSection
         name={instructor.name}
         role={instructor.role}

@@ -68,76 +68,58 @@ export function LessonNavigation({
         className
       )}
     >
-      <div className="mx-auto flex max-w-4xl items-center justify-between gap-tatva-4">
+      <div className="mx-auto flex max-w-4xl items-center justify-between gap-4">
         {/* Previous Lesson */}
-        <div className="flex-1">
+        <div className="flex-shrink-0">
           {previousLesson ? (
             <button
               onClick={onPreviousClick}
-              className="group flex items-center gap-tatva-3 rounded-xl border border-gray-200 p-tatva-3 transition-colors hover:border-gray-300 hover:bg-gray-50"
+              className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 transition-colors hover:border-gray-300 hover:bg-gray-50"
             >
-              <div className="flex size-tatva-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors group-hover:border-lms-primary-500">
-                <Icon name="chevron-left" size="sm" tone="secondary" />
-              </div>
-              <div className="text-left">
-                <Text variant="label-sm" tone="tertiary">
-                  Previous {getLessonTypeLabel(previousLesson.type)}
-                </Text>
-                <Text variant="body-sm" className="line-clamp-1">
-                  {previousLesson.title}
-                </Text>
-              </div>
+              <Icon name="chevron-left" size="sm" tone="secondary" />
+              <Text variant="body-sm" tone="secondary">
+                Previous
+              </Text>
             </button>
           ) : (
-            <div />
+            <div className="w-24" />
           )}
         </div>
 
         {/* Mark Complete Button */}
-        {onMarkComplete && (
-          <div className="shrink-0">
+        <div className="flex-shrink-0">
+          {onMarkComplete && (
             <Button
               variant={isCompleted ? "outline" : "primary"}
-              size="md"
+              size="sm"
               onClick={onMarkComplete}
               icon={isCompleted ? "check" : undefined}
             >
               {isCompleted ? "Completed" : "Mark as Complete"}
             </Button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Next Lesson */}
-        <div className="flex flex-1 justify-end">
+        <div className="flex-shrink-0">
           {nextLesson ? (
             <button
               onClick={onNextClick}
-              className="group flex items-center gap-tatva-3 rounded-xl border border-gray-200 p-tatva-3 transition-colors hover:border-gray-300 hover:bg-gray-50"
+              className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 transition-colors hover:border-gray-300 hover:bg-gray-50"
             >
-              <div className="text-right">
-                <Text variant="label-sm" tone="tertiary">
-                  Next {getLessonTypeLabel(nextLesson.type)}
-                </Text>
-                <Text variant="body-sm" className="line-clamp-1">
-                  {nextLesson.title}
-                </Text>
-              </div>
-              <div className="flex size-tatva-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white transition-colors group-hover:border-lms-primary-500">
-                <Icon name="chevron-right" size="sm" tone="secondary" />
-              </div>
+              <Text variant="body-sm" tone="secondary">
+                Next
+              </Text>
+              <Icon name="chevron-right" size="sm" tone="secondary" />
             </button>
           ) : (
-            <div />
+            <div className="w-24" />
           )}
         </div>
       </div>
     </div>
   );
 }
-
-// ============================================================================
-// Compact Variant - For use within content area
-// ============================================================================
 
 export function LessonNavigationCompact({
   previousLesson,

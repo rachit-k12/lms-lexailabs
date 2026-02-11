@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { LmsNavbar, Footer } from "@/components";
+import { useAuth } from "@/lib/contexts/auth-context";
 
 export default function MarketingLayout({
   children,
@@ -10,6 +11,7 @@ export default function MarketingLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user, isAuthenticated, logout } = useAuth();
   const isHomePage = pathname === "/";
 
   const navItems = [
@@ -25,8 +27,15 @@ export default function MarketingLayout({
           <div className="fixed top-0 left-0 right-0 z-50">
             <LmsNavbar
               navItems={navItems}
+              isLoggedIn={isAuthenticated}
+              user={user ? {
+                name: user.name,
+                email: user.email,
+                avatar: user.image || undefined,
+              } : undefined}
               onGetStarted={() => router.push("/signup")}
               onLogin={() => router.push("/login")}
+              onLogout={logout}
               variant="transparent"
             />
           </div>
@@ -38,8 +47,15 @@ export default function MarketingLayout({
           <div className="fixed top-0 left-0 right-0 z-50">
             <LmsNavbar
               navItems={navItems}
+              isLoggedIn={isAuthenticated}
+              user={user ? {
+                name: user.name,
+                email: user.email,
+                avatar: user.image || undefined,
+              } : undefined}
               onGetStarted={() => router.push("/signup")}
               onLogin={() => router.push("/login")}
+              onLogout={logout}
               variant="default"
             />
           </div>

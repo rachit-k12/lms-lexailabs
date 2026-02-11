@@ -16,7 +16,8 @@ export type LessonStatus = "locked" | "available" | "in-progress" | "completed";
 export interface Lesson {
   id: string;
   title: string;
-  duration: string;
+  /** Duration in minutes (number) or formatted string (e.g., "10 min") */
+  duration: string | number;
   type: LessonType;
   /** Whether this lesson is available for preview (free) */
   isPreview?: boolean;
@@ -96,11 +97,24 @@ function getLessonTypeColor(type: LessonType): string {
   }
 }
 
+function formatDuration(duration: string | number | undefined): string {
+  if (duration === undefined || duration === null) return "";
+  if (typeof duration === "number") {
+    return `${duration} min`;
+  }
+  return duration;
+}
+
 function calculateModuleStats(lessons: Lesson[]) {
   const totalLessons = lessons.length;
   const completedLessons = lessons.filter((l) => l.status === "completed").length;
   const totalMinutes = lessons.reduce((acc, lesson) => {
-    const match = lesson.duration.match(/(\d+)/);
+    // Handle duration as number or string
+    if (typeof lesson.duration === "number") {
+      return acc + lesson.duration;
+    }
+    const duration = lesson.duration || "";
+    const match = duration.match(/(\d+)/);
     return acc + (match ? parseInt(match[1], 10) : 0);
   }, 0);
 
@@ -171,7 +185,12 @@ export function CourseContentAccordion({
   const totalLessons = modules.reduce((acc, m) => acc + m.lessons.length, 0);
   const totalMinutes = modules.reduce((acc, m) => {
     return acc + m.lessons.reduce((lessonAcc, lesson) => {
-      const match = lesson.duration.match(/(\d+)/);
+      // Handle duration as number or string
+      if (typeof lesson.duration === "number") {
+        return lessonAcc + lesson.duration;
+      }
+      const duration = lesson.duration || "";
+      const match = duration.match(/(\d+)/);
       return lessonAcc + (match ? parseInt(match[1], 10) : 0);
     }, 0);
   }, 0);
@@ -384,7 +403,7 @@ export function CourseContentAccordion({
                             {/* Lesson type label for mobile */}
                             <div className="mt-1 flex items-center gap-2 sm:hidden">
                               <Text variant="body-xs" tone="tertiary">
-                                {getLessonTypeLabel(lesson.type)} • {lesson.duration}
+                                {getLessonTypeLabel(lesson.type)} • {formatDuration(lesson.duration)}
                               </Text>
                             </div>
                           </div>
@@ -421,7 +440,7 @@ export function CourseContentAccordion({
                             {/* Duration */}
                             <div className="w-14 text-right">
                               <Text variant="body-xs" tone="tertiary">
-                                {lesson.duration}
+                                {formatDuration(lesson.duration)}
                               </Text>
                             </div>
                           </div>

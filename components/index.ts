@@ -53,6 +53,8 @@ export {
   LessonNavigationCompact,
   type LessonNavigationProps,
   type LessonInfo,
+  PaymentButton,
+  type PaymentButtonProps,
   TrustedBySection,
   WhatYoullLearnSection,
   CourseIncludesSection,

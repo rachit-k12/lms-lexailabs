@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import { TooltipProvider, Toaster } from "@/components";
+import { AuthProvider } from "@/lib/contexts/auth-context";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -34,10 +36,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${plusJakartaSans.variable} ${lora.variable}`}>
       <body className="antialiased font-sans">
-        <TooltipProvider>
-          {children}
-          <Toaster />
-        </TooltipProvider>
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
+        <AuthProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster />
+          </TooltipProvider>
+        </AuthProvider>
       </body>
     </html>
   );

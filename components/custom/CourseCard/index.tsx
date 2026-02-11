@@ -110,12 +110,18 @@ export function CourseCard({
     <div className={cn(getCardStyles(state), className)}>
       {/* Image Container - Fully rounded inside the card padding */}
       <div className="relative aspect-video w-full overflow-hidden rounded-tatva-lg bg-tatva-background-secondary">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover"
-        />
+        {image ? (
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-lms-primary-100 to-lms-primary-200">
+            <Icon name="audio-book" size="xl" className="text-lms-primary-400" />
+          </div>
+        )}
 
         {/* State Indicator Overlay */}
         {state === "completed" && (

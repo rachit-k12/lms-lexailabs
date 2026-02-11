@@ -1,0 +1,4684 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "LexAI LMS API",
+    "description": "Complete REST API for the LexAI Learning Management System. Supports B2C (individual subscription) and B2B (institutional) access models, JWT-based authentication with httpOnly cookies, role-based access control, and comprehensive course content management.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "LexAI LMS"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "access_token",
+        "description": "JWT access token stored in httpOnly cookie. Obtained via POST /auth/login or GET /auth/google/callback."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "PLATFORM_ADMIN",
+              "INSTITUTION_ADMIN",
+              "INSTRUCTOR",
+              "STUDENT"
+            ]
+          },
+          "emailVerified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Membership": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "STUDENT"
+            ]
+          },
+          "isVerified": {
+            "type": "boolean"
+          },
+          "batchId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "nullable": true
+          },
+          "introVideoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "number"
+          },
+          "isPublished": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CourseCatalogItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "number"
+          },
+          "moduleCount": {
+            "type": "integer"
+          },
+          "lessonCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "Module": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "courseId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer"
+          }
+        }
+      },
+      "Lesson": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "moduleId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "VIDEO",
+              "ARTICLE"
+            ]
+          },
+          "isFree": {
+            "type": "boolean"
+          },
+          "videoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "duration": {
+            "type": "integer"
+          }
+        }
+      },
+      "Organization": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "emailDomains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "contractStart": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "contractEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "StudentRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "enrollmentId": {
+            "type": "string"
+          },
+          "batchId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isClaimed": {
+            "type": "boolean"
+          },
+          "claimedByUserId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "tags": [
+          "Health"
+        ],
+        "description": "Simple health check endpoint. Returns 200 if the server is running. No authentication required.",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Server is healthy",
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/google/login": {
+      "get": {
+        "summary": "Google OAuth login",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Initiate Google OAuth 2.0 flow. Redirects the user to Google's consent screen. Sets temporary httpOnly cookies (oauth_state, oauth_code_verifier) for CSRF protection and PKCE.",
+        "responses": {
+          "302": {
+            "description": "Redirects to Google OAuth consent page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Redirects to Google OAuth consent page"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "summary": "Google OAuth callback",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Handle the redirect from Google after user consent. Exchanges authorization code for tokens, creates or links user account, issues JWT cookies, and redirects to the frontend. If the user's email domain matches an institution, redirects to the verification page.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "code",
+            "required": false,
+            "description": "Authorization code from Google"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "description": "OAuth state for CSRF protection"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to frontend (/ on success, /sign-in?error=oauth_failed on error)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Redirects to frontend (/ on success, /sign-in?error=oauth_failed on error)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Create a new user account. Sends a verification email with a link that expires in 24 hours. Password is hashed with bcrypt before storage.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "example": "Jane Smith"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 255,
+                    "example": "jane@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "example": "securepass123",
+                    "description": "Must be 8-128 characters"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account created. Verification email sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Account created. Verification email sent.",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Account created. Please check your email to verify your account."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error (short password, invalid email, empty name)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error (short password, invalid email, empty name)",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation failed"
+                    },
+                    "details": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Email already registered",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "An account with this email already exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Authenticate with email and password. Sets httpOnly cookies with access_token (15min) and refresh_token (7 days). Returns the same error for wrong password and nonexistent email to prevent user enumeration.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "student@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful. Auth cookies set via Set-Cookie headers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Login successful. Auth cookies set via Set-Cookie headers.",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "requiresInstitutionVerification": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "organizationSlug": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials (wrong password, nonexistent user, or OAuth-only account)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Invalid credentials (wrong password, nonexistent user, or OAuth-only account)",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid email or password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Email not verified or account deactivated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Email not verified or account deactivated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Please verify your email before signing in"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "EMAIL_NOT_VERIFIED"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify-email": {
+      "get": {
+        "summary": "Verify email address",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Verify a user's email via the link sent during registration. Redirects to the frontend sign-in page with a query parameter indicating success or failure. Token expires in 24 hours.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "description": "Verification token from the email link"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to frontend: ?verified=true on success, ?error=token_expired or ?error=invalid_token on failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Redirects to frontend: ?verified=true on success, ?error=token_expired or ?error=invalid_token on failure"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "summary": "Request password reset",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Send a password reset email if the account exists. Always returns success regardless of whether the email is registered, to prevent email enumeration. Reset token expires in 1 hour.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Always returns success (prevents email enumeration)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Always returns success (prevents email enumeration)",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "If an account with that email exists, a password reset link has been sent."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "summary": "Reset password",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Reset password using the token from the reset email. On success, all refresh tokens for the user are revoked, forcing re-login on all devices. Token is single-use and expires in 1 hour.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token",
+                  "password"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Raw token from the password reset email link",
+                    "example": "abc123def456"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "description": "New password (8-128 characters)",
+                    "example": "newsecurepass123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed. All sessions revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Password changed. All sessions revoked.",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Password has been reset. Please sign in with your new password."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, expired, or already-used token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Invalid, expired, or already-used token",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid or expired reset token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Refresh tokens",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Exchange a valid refresh_token cookie for new access_token + refresh_token (token rotation). The old refresh token is revoked. If a revoked token is reused, ALL user tokens are revoked as a security measure (token theft detection).",
+        "responses": {
+          "200": {
+            "description": "New tokens issued via Set-Cookie headers. Old refresh token revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "New tokens issued via Set-Cookie headers. Old refresh token revoked.",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No cookie, invalid/expired/revoked token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "No cookie, invalid/expired/revoked token",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid refresh token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account deactivated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Account deactivated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account deactivated"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Revoke the current refresh token and clear auth cookies. The access_token JWT remains valid until its 15-minute expiry (stateless JWT cannot be revoked server-side).",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Logged out successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout-all": {
+      "post": {
+        "summary": "Logout from all devices",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Revoke ALL refresh tokens for the current user, forcing re-authentication on every device. Clears current session cookies.",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All sessions revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "All sessions revoked",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify-institution": {
+      "post": {
+        "summary": "Verify institutional affiliation",
+        "tags": [
+          "Auth - Institution"
+        ],
+        "description": "Verify the user's affiliation with an institution using their enrollment ID. On success: creates org membership, marks student record as claimed, and auto-enrolls the user in all published institutional courses.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "enrollmentId"
+                ],
+                "properties": {
+                  "enrollmentId": {
+                    "type": "string",
+                    "example": "ACM-2024-001",
+                    "description": "Enrollment ID provided by the institution"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Verified successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "organization": {
+                      "type": "string",
+                      "example": "Acme University"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully verified with Acme University. You now have access to your institutional courses."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Already verified or enrollment ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Already verified or enrollment ID not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Enrollment ID not found. Please check your ID or contact your institution."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No institution matches user's email domain",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "No institution matches user's email domain",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "No institution found for your email domain"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/institution-status": {
+      "get": {
+        "summary": "Check institution status",
+        "tags": [
+          "Auth - Institution"
+        ],
+        "description": "Check if the current user's email domain matches any registered institution and whether they have completed verification.",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Institution status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Institution status",
+                  "type": "object",
+                  "properties": {
+                    "hasInstitution": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "organizationName": {
+                      "type": "string",
+                      "example": "Acme University"
+                    },
+                    "organizationSlug": {
+                      "type": "string",
+                      "example": "acme-university"
+                    },
+                    "isVerified": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Get the authenticated user's profile and organization memberships. Requires a valid access_token cookie.",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile with memberships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "User profile with memberships",
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "clx1234567890"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Jane Smith"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "jane@example.com"
+                        },
+                        "image": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "PLATFORM_ADMIN",
+                            "INSTITUTION_ADMIN",
+                            "INSTRUCTOR",
+                            "STUDENT"
+                          ],
+                          "example": "STUDENT"
+                        },
+                        "emailVerified": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "organizationName": {
+                            "type": "string",
+                            "example": "Acme University"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "ADMIN",
+                              "STUDENT"
+                            ]
+                          },
+                          "isVerified": {
+                            "type": "boolean"
+                          },
+                          "batchId": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not authenticated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found (deleted while token still valid)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "User not found (deleted while token still valid)",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/organizations/": {
+      "get": {
+        "summary": "List organizations",
+        "tags": [
+          "Admin - Organizations"
+        ],
+        "description": "List all organizations with member and student record counts.",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Organizations list",
+                  "type": "object",
+                  "properties": {
+                    "organizations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Acme University"
+                          },
+                          "slug": {
+                            "type": "string",
+                            "example": "acme-university"
+                          },
+                          "emailDomains": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "acme.edu"
+                            ]
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          },
+                          "contractStart": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "contractEnd": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "_count": {
+                            "type": "object",
+                            "properties": {
+                              "members": {
+                                "type": "integer"
+                              },
+                              "studentRecords": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an organization",
+        "tags": [
+          "Admin - Organizations"
+        ],
+        "description": "Create a new organization for B2B institutional access. Email domains are used for auto-detection during Google OAuth login.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "slug",
+                  "emailDomains"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Acme University"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-]+$",
+                    "example": "acme-university"
+                  },
+                  "emailDomains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "acme.edu"
+                    ]
+                  },
+                  "contractStart": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "contractEnd": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Organization created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Organization created",
+                  "type": "object",
+                  "properties": {
+                    "organization": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Slug already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Slug already in use",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/organizations/{id}": {
+      "get": {
+        "summary": "Get organization details",
+        "tags": [
+          "Admin - Organizations"
+        ],
+        "description": "Get organization details including batches and counts of members, students, and course assignments.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Organization CUID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Organization details",
+                  "type": "object",
+                  "properties": {
+                    "organization": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Organization not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update an organization",
+        "tags": [
+          "Admin - Organizations"
+        ],
+        "description": "Update organization properties. All fields are optional.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  },
+                  "emailDomains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "isActive": {
+                    "type": "boolean"
+                  },
+                  "contractStart": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "contractEnd": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Organization updated",
+                  "type": "object",
+                  "properties": {
+                    "organization": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/organizations/{orgId}/admins": {
+      "post": {
+        "summary": "Add institution admin",
+        "tags": [
+          "Admin - Organizations"
+        ],
+        "description": "Add an institution admin to an organization. Creates the user account if it doesn't exist. If the user exists and is a STUDENT, promotes to INSTITUTION_ADMIN.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Dr. Admin"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "admin@acme.edu"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Optional — if provided, sets the user's password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Admin added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Admin added",
+                  "type": "object",
+                  "properties": {
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "ADMIN"
+                        },
+                        "isVerified": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "userId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing name or email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Missing name or email",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Organization not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/": {
+      "get": {
+        "summary": "List users",
+        "tags": [
+          "Admin - Users"
+        ],
+        "description": "List all users with pagination and search. Search is case-insensitive and matches name or email.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "default": "1"
+            },
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "description": "Page number (1-based)"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "20"
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Items per page (1-100)"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "description": "Search by name or email"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated user list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Paginated user list",
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "PLATFORM_ADMIN",
+                              "INSTITUTION_ADMIN",
+                              "INSTRUCTOR",
+                              "STUDENT"
+                            ]
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          },
+                          "emailVerified": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "_count": {
+                            "type": "object",
+                            "properties": {
+                              "organizationMembers": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "totalPages": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}": {
+      "patch": {
+        "summary": "Update user role or status",
+        "tags": [
+          "Admin - Users"
+        ],
+        "description": "Update a user's role or active status. Used for promoting users, deactivating accounts, etc.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "PLATFORM_ADMIN",
+                      "INSTITUTION_ADMIN",
+                      "INSTRUCTOR",
+                      "STUDENT"
+                    ]
+                  },
+                  "isActive": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "User CUID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "User updated",
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        },
+                        "isActive": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institutions/{orgId}/students/": {
+      "get": {
+        "summary": "List student records",
+        "tags": [
+          "Institutions - Students"
+        ],
+        "description": "List student records for an organization with pagination, search, and filters. Requires org ADMIN role or PLATFORM_ADMIN.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "description": "Page number"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Items per page (1-100)"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "description": "Search by name, email, or enrollment ID"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "batchId",
+            "required": false,
+            "description": "Filter by batch ID"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            },
+            "in": "query",
+            "name": "claimed",
+            "required": false,
+            "description": "Filter by claimed status"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "description": "Organization CUID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated student records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Paginated student records",
+                  "type": "object",
+                  "properties": {
+                    "students": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string",
+                            "example": "student@acme.edu"
+                          },
+                          "name": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "enrollmentId": {
+                            "type": "string",
+                            "example": "ACM-2024-001"
+                          },
+                          "batchId": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "isClaimed": {
+                            "type": "boolean"
+                          },
+                          "claimedByUserId": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "batch": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "claimedBy": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "totalPages": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institutions/{orgId}/students/{recordId}": {
+      "delete": {
+        "summary": "Delete a student record",
+        "tags": [
+          "Institutions - Students"
+        ],
+        "description": "Delete a student record. If the record was claimed, also removes the org membership and institutional course enrollments for that user.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "description": "Organization CUID"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "recordId",
+            "required": true,
+            "description": "StudentRecord CUID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Student record deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Student record deleted",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student record not found in this organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Student record not found in this organization",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Student record not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institutions/{orgId}/students/upload": {
+      "post": {
+        "summary": "Upload student CSV",
+        "tags": [
+          "Institutions - Students"
+        ],
+        "description": "Upload a CSV file containing student records. Auto-creates batches and auto-links existing users. If a user with a matching email already exists, they are automatically enrolled. Maximum file size: 5MB. CSV columns: name, email, enrollmentId, batch.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Upload processed",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "stats": {
+                      "type": "object",
+                      "properties": {
+                        "added": {
+                          "type": "integer",
+                          "example": 45
+                        },
+                        "updated": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "alreadyClaimed": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "autoLinked": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "totalProcessed": {
+                          "type": "integer",
+                          "example": 53
+                        },
+                        "parseErrors": {
+                          "type": "integer",
+                          "example": 2
+                        }
+                      }
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "row": {
+                            "type": "integer"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No file or no valid records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "No file or no valid records",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Organization not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institutions/{orgId}/courses/": {
+      "get": {
+        "summary": "List course access",
+        "tags": [
+          "Institutions - Courses"
+        ],
+        "description": "List all course access assignments for an organization, including both org-level and batch-level assignments.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course access assignments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course access assignments",
+                  "type": "object",
+                  "properties": {
+                    "organizationCourses": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "courseId": {
+                            "type": "string"
+                          },
+                          "course": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "batchCourses": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "batchId": {
+                            "type": "string"
+                          },
+                          "courseId": {
+                            "type": "string"
+                          },
+                          "course": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "batch": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Assign course access",
+        "tags": [
+          "Institutions - Courses"
+        ],
+        "description": "Assign course access to an organization or a specific batch. Auto-enrolls all verified active members. If batchId is provided, assigns to the batch; otherwise assigns to the entire org.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "courseId"
+                ],
+                "properties": {
+                  "courseId": {
+                    "type": "string",
+                    "description": "Course CUID to assign"
+                  },
+                  "batchId": {
+                    "type": "string",
+                    "description": "Optional — if provided, assigns to batch instead of org"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Course access assigned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course access assigned",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course or batch not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course or batch not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institutions/{orgId}/courses/{courseId}": {
+      "delete": {
+        "summary": "Remove course access",
+        "tags": [
+          "Institutions - Courses"
+        ],
+        "description": "Remove course access from an organization or batch. Does NOT unenroll existing students — their CourseEnrollment records remain.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "batchId",
+            "required": false,
+            "description": "If provided, removes batch-level access only"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course access removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course access removed",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/featured": {
+      "get": {
+        "summary": "List featured courses",
+        "tags": [
+          "Courses"
+        ],
+        "description": "Get up to 3 featured published courses.",
+        "responses": {
+          "200": {
+            "description": "Featured courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Featured courses",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/": {
+      "get": {
+        "summary": "List published courses",
+        "tags": [
+          "Courses"
+        ],
+        "description": "Get the public course catalog with filtering and pagination.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "category",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "level",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "featured",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "in": "query",
+            "name": "offset",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "search",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course catalog",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{slug}": {
+      "get": {
+        "summary": "Get course details",
+        "tags": [
+          "Courses"
+        ],
+        "description": "Get detailed course information with full module/lesson structure.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "intro-to-ai"
+            },
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "description": "Course URL slug"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course details with modules and lesson metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course details with modules and lesson metadata",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found or not published",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course not found or not published",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Course not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/my/enrolled": {
+      "get": {
+        "summary": "List enrolled courses",
+        "tags": [
+          "Courses"
+        ],
+        "description": "List all courses the authenticated user has access to, with access source (INDIVIDUAL or INSTITUTION).",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Enrolled courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Enrolled courses",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not authenticated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{slug}/lessons/{lessonId}": {
+      "get": {
+        "summary": "Get lesson content",
+        "tags": [
+          "Lessons"
+        ],
+        "description": "Get full lesson content including video URL, article content, curriculum navigation, and progress.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "description": "Course URL slug"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "lessonId",
+            "required": true,
+            "description": "Lesson CUID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full lesson content with curriculum, navigation, and progress",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Full lesson content with curriculum, navigation, and progress",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Paid lesson, user not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Paid lesson, user not authenticated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Authentication required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Paid lesson, user has no subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Paid lesson, user has no subscription",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Subscription required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lesson not found, course not published, or slug mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson not found, course not published, or slug mismatch",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Lesson not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{slug}/lessons/{lessonId}/progress": {
+      "post": {
+        "summary": "Update lesson progress",
+        "tags": [
+          "Lessons"
+        ],
+        "description": "Update progress for a lesson. watchedSeconds only increases (sending a lower value keeps the existing higher value). completedAt is set only on first completion. Both fields are optional — you can send an empty body.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "completed": {
+                    "type": "boolean",
+                    "description": "Mark lesson as completed"
+                  },
+                  "watchedSeconds": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Video watch time in seconds (only increases)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "slug",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "lessonId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Progress updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Progress updated",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not authenticated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "No subscription",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lesson not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{slug}/progress": {
+      "get": {
+        "summary": "Get course progress",
+        "tags": [
+          "Lessons"
+        ],
+        "description": "Get full progress breakdown for a course.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "description": "Course URL slug"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course progress breakdown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course progress breakdown",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not authenticated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/": {
+      "post": {
+        "summary": "Create a course",
+        "tags": [
+          "Admin - Courses"
+        ],
+        "description": "Create a new course. Slug must be unique, lowercase alphanumeric with hyphens only.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "slug"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "example": "Introduction to Machine Learning"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-]+$",
+                    "example": "intro-to-ml"
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 5000,
+                    "example": "A comprehensive introduction to ML concepts"
+                  },
+                  "thumbnail": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://images.example.com/ml-course.jpg"
+                  },
+                  "introVideoUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 49.99
+                  },
+                  "isPublished": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Course created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course created",
+                  "type": "object",
+                  "properties": {
+                    "course": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "thumbnail": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "introVideoUrl": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "price": {
+                          "type": "number"
+                        },
+                        "isPublished": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not authenticated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not PLATFORM_ADMIN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not PLATFORM_ADMIN",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Slug already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Slug already exists",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Course slug already exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/{courseId}": {
+      "patch": {
+        "summary": "Update a course",
+        "tags": [
+          "Admin - Courses"
+        ],
+        "description": "Update an existing course. All fields are optional (partial update). If changing slug, uniqueness is checked.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "slug": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-]+$"
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 5000
+                  },
+                  "thumbnail": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "introVideoUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "price": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "isPublished": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "description": "Course CUID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course updated",
+                  "type": "object",
+                  "properties": {
+                    "course": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Slug conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Slug conflict",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a course",
+        "tags": [
+          "Admin - Courses"
+        ],
+        "description": "Delete a course and cascade-delete all its modules, lessons, enrollments, and progress records.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course deleted",
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Course deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/{courseId}/modules": {
+      "post": {
+        "summary": "Create a module",
+        "tags": [
+          "Admin - Modules"
+        ],
+        "description": "Create a module within a course. Order must be a positive integer and unique within the course.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "order"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "example": "Getting Started"
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "order": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Module created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Module created",
+                  "type": "object",
+                  "properties": {
+                    "module": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "courseId": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "order": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/{courseId}/modules/{moduleId}": {
+      "patch": {
+        "summary": "Update a module",
+        "tags": [
+          "Admin - Modules"
+        ],
+        "description": "Update a module's title, description, or order.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "moduleId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Module updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Module updated",
+                  "type": "object",
+                  "properties": {
+                    "module": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Module not found in this course",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Module not found in this course",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a module",
+        "tags": [
+          "Admin - Modules"
+        ],
+        "description": "Delete a module and cascade-delete all its lessons.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "moduleId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Module deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Module deleted",
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Module deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Module not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Module not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/{courseId}/modules/reorder": {
+      "patch": {
+        "summary": "Reorder modules",
+        "tags": [
+          "Admin - Modules"
+        ],
+        "description": "Reorder modules within a course. Updates are applied atomically via a database transaction.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "order"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "order": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Modules reordered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Modules reordered",
+                  "type": "object",
+                  "properties": {
+                    "modules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/{courseId}/modules/{moduleId}/lessons": {
+      "post": {
+        "summary": "Create a lesson",
+        "tags": [
+          "Admin - Lessons"
+        ],
+        "description": "Create a lesson within a module. Supports VIDEO and ARTICLE types. Free lessons are accessible without authentication.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "order"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "example": "What is Machine Learning?"
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "order": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "VIDEO",
+                      "ARTICLE"
+                    ],
+                    "default": "ARTICLE"
+                  },
+                  "isFree": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, lesson is accessible without subscription"
+                  },
+                  "videoUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://vimeo.com/123456789"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Markdown/HTML article content"
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Duration in seconds",
+                    "example": 600
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "moduleId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Lesson created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson created",
+                  "type": "object",
+                  "properties": {
+                    "lesson": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "moduleId": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "order": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "isFree": {
+                          "type": "boolean"
+                        },
+                        "videoUrl": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "content": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "duration": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Module not found in this course",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Module not found in this course",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}": {
+      "patch": {
+        "summary": "Update a lesson",
+        "tags": [
+          "Admin - Lessons"
+        ],
+        "description": "Update a lesson's properties. All fields are optional.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "VIDEO",
+                      "ARTICLE"
+                    ]
+                  },
+                  "isFree": {
+                    "type": "boolean"
+                  },
+                  "videoUrl": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "duration": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "moduleId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "lessonId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lesson updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson updated",
+                  "type": "object",
+                  "properties": {
+                    "lesson": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lesson not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a lesson",
+        "tags": [
+          "Admin - Lessons"
+        ],
+        "description": "Delete a lesson and its associated progress records.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "moduleId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "lessonId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lesson deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson deleted",
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Lesson deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lesson not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/courses/{courseId}/modules/{moduleId}/lessons/reorder": {
+      "patch": {
+        "summary": "Reorder lessons",
+        "tags": [
+          "Admin - Lessons"
+        ],
+        "description": "Reorder lessons within a module. Updates are applied atomically via a database transaction.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "order"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "order": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "moduleId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lessons reordered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lessons reordered",
+                  "type": "object",
+                  "properties": {
+                    "lessons": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Validation error",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Module not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Module not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/enrollments": {
+      "get": {
+        "summary": "List user enrollments",
+        "tags": [
+          "User"
+        ],
+        "description": "List all courses the authenticated user is enrolled in, with progress info.",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User enrollments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "User enrollments",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not authenticated",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/enrollments/{courseId}": {
+      "get": {
+        "summary": "Get enrollment progress for a course",
+        "tags": [
+          "User"
+        ],
+        "description": "Get detailed progress for a specific enrolled course. courseId is the course slug.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "description": "Course slug"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course enrollment progress",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course enrollment progress",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Enrollment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Enrollment not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Enroll in a course",
+        "tags": [
+          "User"
+        ],
+        "description": "Enroll the authenticated user in a course. courseId is the course slug.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "courseId",
+            "required": true,
+            "description": "Course slug"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully enrolled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Successfully enrolled",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Already enrolled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Already enrolled",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/lessons/{lessonId}/progress": {
+      "put": {
+        "summary": "Update lesson progress",
+        "tags": [
+          "User"
+        ],
+        "description": "Update watch progress for a lesson.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "courseId"
+                ],
+                "properties": {
+                  "courseId": {
+                    "type": "string",
+                    "description": "Course slug"
+                  },
+                  "watchedSeconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "lessonId",
+            "required": true,
+            "description": "Lesson CUID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Progress updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Progress updated",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lesson or course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson or course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/lessons/{lessonId}/complete": {
+      "post": {
+        "summary": "Mark lesson as complete",
+        "tags": [
+          "User"
+        ],
+        "description": "Mark a lesson as completed and recompute course progress.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "courseId"
+                ],
+                "properties": {
+                  "courseId": {
+                    "type": "string",
+                    "description": "Course slug"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "lessonId",
+            "required": true,
+            "description": "Lesson CUID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lesson marked as complete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson marked as complete",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lesson or course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Lesson or course not found",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://29d7-121-244-181-149.ngrok-free.app",
+      "description": "Tunnel server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Health check endpoint"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication — register, login, logout, token refresh, password reset, email verification, Google OAuth"
+    },
+    {
+      "name": "Auth - Institution",
+      "description": "Institution verification — enrollment ID verification and status check"
+    },
+    {
+      "name": "Courses",
+      "description": "Public course catalog — list published courses, get course details, list enrolled courses"
+    },
+    {
+      "name": "Lessons",
+      "description": "Lesson content delivery — access lesson content (free/paid gating), update progress, get course progress"
+    },
+    {
+      "name": "Admin - Courses",
+      "description": "Admin course CRUD — create, update, delete courses (PLATFORM_ADMIN only)"
+    },
+    {
+      "name": "Admin - Modules",
+      "description": "Admin module CRUD — create, update, delete, reorder modules (PLATFORM_ADMIN only)"
+    },
+    {
+      "name": "Admin - Lessons",
+      "description": "Admin lesson CRUD — create, update, delete, reorder lessons (PLATFORM_ADMIN only)"
+    },
+    {
+      "name": "Admin - Organizations",
+      "description": "Admin organization management — create, update, list organizations and add org admins (PLATFORM_ADMIN only)"
+    },
+    {
+      "name": "Admin - Users",
+      "description": "Admin user management — list users, update roles and status (PLATFORM_ADMIN only)"
+    },
+    {
+      "name": "Institutions - Students",
+      "description": "Institution student management — list and delete student records, upload CSV (Org ADMIN only)"
+    },
+    {
+      "name": "Institutions - Courses",
+      "description": "Institution course access — assign/remove course access for org or batch (Org ADMIN only)"
+    },
+    {
+      "name": "User",
+      "description": "User routes — enrollments, lesson progress, and course completion tracking (authenticated users)"
+    }
+  ]
+}

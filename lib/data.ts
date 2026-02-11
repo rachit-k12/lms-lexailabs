@@ -60,20 +60,20 @@ export interface Instructor {
 
 export const instructor: Instructor = {
   name: "Puru Kathuria",
-  role: "Founder, Lex AI Labs | SWE at Google",
-  bio: "Backend Engineer at Google working on Distributed Systems and AI",
+  role: "Founder, Lex AI | Former Software Engineer at Google",
+  bio: "Former Backend Engineer at Google working on Distributed Systems and AI",
   bioPoints: [
-    "At Google, works on Backend Engineering, Distributed Systems, and AI for Cloud Security products",
-    "Teaches Applied AI (Machine Learning, Deep Learning, LLMs) at LexAI Labs",
+    "At Google, worked on Backend Engineering, Distributed Systems, and AI for Cloud Security products",
+    "Teaches Applied AI (Machine Learning, Deep Learning, LLMs) at Lex AI",
     "Previously at MathWorks, focused on self-driving cars, motion planning, and speech recognition",
     "Founded a Deep Learning Book Club, fostering a community of learners",
   ],
   avatar: "https://media.licdn.com/dms/image/v2/D4D03AQGQtno9QlQ5ug/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1715758859402?e=1772064000&v=beta&t=GOyIYDDytPLCRWdXEWX_4s5XF4RBY9WtlpxIdeBwg7g",
   credentials: [
-    "M.Tech in ML & AI from IIIT Delhi",
-    "Software Engineer at Google",
+    "Computer Science Engineering with ML & AI focus",
+    "Former Software Engineer at Google",
     "Former SWE at MathWorks",
-    "Trained 10,000+ students globally",
+    "Trained 500+ students",
   ],
   socialLinks: {
     linkedin: "https://linkedin.com/in/purukathuria",

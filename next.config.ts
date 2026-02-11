@@ -23,7 +23,21 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "media.gettyimages.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.lexai.com",
+      },
     ],
+  },
+  // Proxy API requests to backend to avoid CORS/cookie issues with HTTP
+  async rewrites() {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://207-180-211-24.nip.io:8080";
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${backendUrl}/:path*`,
+      },
+    ];
   },
 };
 

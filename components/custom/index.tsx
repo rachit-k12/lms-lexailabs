@@ -19,6 +19,7 @@ export { VideoPlayer, type VideoPlayerProps } from "./VideoPlayer";
 export { MDXContent, Prose, CodeBlock, Callout, mdxComponents, type MDXContentProps } from "./MDXContent";
 export { MarkdownContent, type MarkdownContentProps } from "./MarkdownContent";
 export { LessonNavigation, LessonNavigationCompact, type LessonNavigationProps, type LessonInfo } from "./LessonNavigation";
+export { PaymentButton, type PaymentButtonProps } from "./PaymentButton";
 export {
   TrustedBySection,
   WhatYoullLearnSection,
