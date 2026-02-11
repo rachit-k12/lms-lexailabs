@@ -284,7 +284,7 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
               <div className="flex items-center gap-3">
                 <Badge
                   type="label"
-                  variant={access.type === "organization" ? "default" : "neutral"}
+                  variant={access.type === "organization" ? "indigo" : "default"}
                   size="sm"
                 >
                   {access.type === "organization"
@@ -324,7 +324,7 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
             </label>
             <Select
               value={selectedCourseId}
-              onChange={(value) => setSelectedCourseId(value as string)}
+              onValueChange={(value) => setSelectedCourseId(value as string)}
               options={courseOptions}
               placeholder="Select a course"
             />
@@ -335,7 +335,7 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
             </label>
             <Select
               value={selectedBatchId}
-              onChange={(value) => setSelectedBatchId(value as string)}
+              onValueChange={(value) => setSelectedBatchId(value as string)}
               options={batchOptions}
             />
             <Text variant="body-xs" tone="tertiary" className="mt-1">
@@ -352,7 +352,7 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
         title="Remove Course Access"
         description={`Are you sure you want to remove access to "${accessToRemove?.courseTitle}" for ${accessToRemove?.batchName || "all members"}?`}
         submitButtonText="Remove"
-        submitButtonVariant="danger"
+        submitButtonVariant="destructive"
         onSubmit={handleRemoveAccess}
         isSubmitting={isRemoving}
         size="sm"

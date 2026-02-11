@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Text, Button, Table, Badge } from "@/components";
 import { getOrganizations, getErrorMessage } from "@/lib/api";
-import type { Organization, TableColumn, TableAction } from "@/lib/api";
+import type { Organization } from "@/lib/api";
+import type { TableColumn, TableAction } from "@/components";
 import { toast } from "@/components";
 
 export default function AdminOrganizationsPage() {
@@ -67,12 +68,12 @@ export default function AdminOrganizationsPage() {
         cell: ({ row }) => (
           <div className="flex flex-wrap gap-1">
             {row.original.emailDomains.slice(0, 2).map((domain) => (
-              <Badge key={domain} type="label" variant="neutral" size="sm">
+              <Badge key={domain} type="label" variant="default" size="sm">
                 {domain}
               </Badge>
             ))}
             {row.original.emailDomains.length > 2 && (
-              <Badge type="label" variant="neutral" size="sm">
+              <Badge type="label" variant="default" size="sm">
                 +{row.original.emailDomains.length - 2}
               </Badge>
             )}
@@ -82,7 +83,7 @@ export default function AdminOrganizationsPage() {
       {
         id: "members",
         header: "Members",
-        accessorKey: "_count.members",
+        accessorFn: (row) => row._count?.members,
         cell: ({ row }) => (
           <Text variant="body-md">{row.original._count?.members || 0}</Text>
         ),
@@ -90,7 +91,7 @@ export default function AdminOrganizationsPage() {
       {
         id: "students",
         header: "Students",
-        accessorKey: "_count.studentRecords",
+        accessorFn: (row) => row._count?.studentRecords,
         cell: ({ row }) => (
           <Text variant="body-md">{row.original._count?.studentRecords || 0}</Text>
         ),
@@ -102,7 +103,7 @@ export default function AdminOrganizationsPage() {
         cell: ({ row }) => (
           <Badge
             type="label"
-            variant={row.original.isActive ? "success" : "danger"}
+            variant={row.original.isActive ? "green" : "red"}
             size="sm"
           >
             {row.original.isActive ? "Active" : "Inactive"}
@@ -132,7 +133,7 @@ export default function AdminOrganizationsPage() {
     []
   );
 
-  const actions: TableAction<Organization>[] = [
+  const getActions = (): TableAction<Organization>[] => [
     {
       label: "View Details",
       icon: "eye",
@@ -182,7 +183,7 @@ export default function AdminOrganizationsPage() {
           columns={columns}
           data={filteredOrganizations}
           isLoading={isLoading}
-          actions={actions}
+          actions={getActions}
           onSearchChange={setSearchQuery}
           searchPlaceholder="Search organizations..."
           emptyTitle="No organizations found"

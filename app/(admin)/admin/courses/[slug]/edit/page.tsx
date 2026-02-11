@@ -450,7 +450,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
                   </label>
                   <Select
                     value={category}
-                    onChange={(value) => setCategory(value as string)}
+                    onValueChange={(value) => setCategory(value as string)}
                     options={CATEGORY_OPTIONS}
                   />
                 </div>
@@ -461,7 +461,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
                   </label>
                   <Select
                     value={level}
-                    onChange={(value) => setLevel(value as string)}
+                    onValueChange={(value) => setLevel(value as string)}
                     options={LEVEL_OPTIONS}
                   />
                 </div>
@@ -724,7 +724,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
                           <div>
                             <Text variant="body-md">{lesson.title}</Text>
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge type="label" variant="neutral" size="sm">
+                              <Badge type="label" variant="default" size="sm">
                                 {lesson.type}
                               </Badge>
                               {lesson.isPreview && (
@@ -830,7 +830,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
             </label>
             <Select
               value={lessonType}
-              onChange={(value) => setLessonType(value as string)}
+              onValueChange={(value) => setLessonType(value as string)}
               options={LESSON_TYPE_OPTIONS}
             />
           </div>
@@ -906,7 +906,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
         title={`Delete ${deleteType === "module" ? "Module" : "Lesson"}`}
         description={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
         submitButtonText="Delete"
-        submitButtonVariant="danger"
+        submitButtonVariant="destructive"
         onSubmit={handleDeleteConfirm}
         isSubmitting={isDeleting}
         size="sm"

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Text, Button, Table, Badge, Dialog, toast } from "@/components";
 import { getCourses, deleteCourse, getErrorMessage } from "@/lib/api";
-import type { CourseListItem, TableColumn, TableAction } from "@/lib/api";
+import type { CourseListItem } from "@/lib/api";
+import type { TableColumn, TableAction } from "@/components";
 
 export default function AdminCoursesPage() {
   const router = useRouter();
@@ -107,7 +108,7 @@ export default function AdminCoursesPage() {
         cell: ({ row }) => (
           <Badge
             type="label"
-            variant={row.original.category === "engineering" ? "default" : "neutral"}
+            variant={row.original.category === "engineering" ? "indigo" : "default"}
             size="sm"
           >
             {row.original.category === "engineering" ? "Engineering" : "Non-Engineering"}
@@ -119,7 +120,7 @@ export default function AdminCoursesPage() {
         header: "Level",
         accessorKey: "level",
         cell: ({ row }) => (
-          <Badge type="label" variant="neutral" size="sm">
+          <Badge type="label" variant="default" size="sm">
             {row.original.level}
           </Badge>
         ),
@@ -148,7 +149,7 @@ export default function AdminCoursesPage() {
     []
   );
 
-  const actions: TableAction<CourseListItem>[] = [
+  const getActions = (): TableAction<CourseListItem>[] => [
     {
       label: "Edit",
       icon: "edit",
@@ -163,7 +164,6 @@ export default function AdminCoursesPage() {
       label: "Delete",
       icon: "trash-2",
       onClick: handleDeleteClick,
-      variant: "danger",
     },
   ];
 
@@ -199,7 +199,7 @@ export default function AdminCoursesPage() {
           columns={columns}
           data={courses}
           isLoading={isLoading}
-          actions={actions}
+          actions={getActions}
           onSearchChange={setSearchQuery}
           searchPlaceholder="Search courses..."
           currentPage={currentPage}
@@ -225,7 +225,7 @@ export default function AdminCoursesPage() {
         title="Delete Course"
         description={`Are you sure you want to delete "${courseToDelete?.title}"? This action cannot be undone.`}
         submitButtonText="Delete"
-        submitButtonVariant="danger"
+        submitButtonVariant="destructive"
         onSubmit={handleDeleteConfirm}
         isSubmitting={isDeleting}
         cancelButtonText="Cancel"

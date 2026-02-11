@@ -166,7 +166,7 @@ export default function OrganizationDetailPage({ params }: OrganizationDetailPag
           </div>
           <Badge
             type="label"
-            variant={organization.isActive ? "success" : "danger"}
+            variant={organization.isActive ? "green" : "red"}
             size="md"
           >
             {organization.isActive ? "Active" : "Inactive"}
@@ -315,7 +315,7 @@ export default function OrganizationDetailPage({ params }: OrganizationDetailPag
                   <Text variant="body-md">{batch.name}</Text>
                   <Badge
                     type="label"
-                    variant={batch.isActive ? "success" : "neutral"}
+                    variant={batch.isActive ? "green" : "default"}
                     size="sm"
                   >
                     {batch.isActive ? "Active" : "Inactive"}

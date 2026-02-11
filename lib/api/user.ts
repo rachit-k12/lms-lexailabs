@@ -102,9 +102,9 @@ export async function enrollInCourse(courseSlug: string): Promise<{
 }
 
 /**
- * Update lesson watch progress
+ * Update lesson watch progress (alternative endpoint)
  */
-export async function updateLessonProgress(
+export async function updateLessonWatchProgress(
   lessonId: string,
   data: { courseId: string; watchedSeconds?: number }
 ): Promise<{

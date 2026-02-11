@@ -206,14 +206,14 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-3">
                     <Badge
                       type="label"
-                      variant={course.category === "engineering" ? "default" : "neutral"}
+                      variant={course.category === "engineering" ? "indigo" : "default"}
                       size="sm"
                     >
                       {course.category === "engineering" ? "Engineering" : "Non-Engineering"}
                     </Badge>
                     <Badge
                       type="label"
-                      variant="neutral"
+                      variant="default"
                       size="sm"
                     >
                       {course.level}

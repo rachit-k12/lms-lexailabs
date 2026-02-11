@@ -133,7 +133,6 @@ export function Navbar({
                 { label: "Logout", icon: "logout", onClick: onLogout },
               ]}
               align="end"
-              width="sm"
             >
               <button className="flex items-center gap-tatva-3 rounded-tatva-full p-tatva-2 transition-colors hover:bg-tatva-background-secondary">
                 <Avatar

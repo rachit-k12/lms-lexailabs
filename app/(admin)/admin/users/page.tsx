@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { Text, Table, Badge, Dialog, Select, Switch, toast } from "@/components";
 import { getUsers, updateUser, getErrorMessage } from "@/lib/api";
-import type { AdminUser, TableColumn, TableAction } from "@/lib/api";
+import type { AdminUser } from "@/lib/api";
+import type { TableColumn, TableAction } from "@/components";
 
 const ROLE_OPTIONS = [
   { value: "STUDENT", label: "Student" },
@@ -13,10 +14,10 @@ const ROLE_OPTIONS = [
 ];
 
 const ROLE_COLORS: Record<string, string> = {
-  STUDENT: "neutral",
-  INSTRUCTOR: "default",
-  INSTITUTION_ADMIN: "default",
-  PLATFORM_ADMIN: "success",
+  STUDENT: "default",
+  INSTRUCTOR: "indigo",
+  INSTITUTION_ADMIN: "indigo",
+  PLATFORM_ADMIN: "green",
 };
 
 export default function AdminUsersPage() {
@@ -122,7 +123,7 @@ export default function AdminUsersPage() {
         cell: ({ row }) => (
           <Badge
             type="label"
-            variant={row.original.isActive ? "success" : "danger"}
+            variant={row.original.isActive ? "green" : "red"}
             size="sm"
           >
             {row.original.isActive ? "Active" : "Inactive"}
@@ -136,7 +137,7 @@ export default function AdminUsersPage() {
         cell: ({ row }) => (
           <Badge
             type="label"
-            variant={row.original.emailVerified ? "success" : "neutral"}
+            variant={row.original.emailVerified ? "green" : "default"}
             size="sm"
           >
             {row.original.emailVerified ? "Verified" : "Pending"}
@@ -146,7 +147,7 @@ export default function AdminUsersPage() {
       {
         id: "organizations",
         header: "Organizations",
-        accessorKey: "_count.organizationMembers",
+        accessorFn: (row) => row._count?.organizationMembers,
         cell: ({ row }) => (
           <Text variant="body-md">
             {row.original._count?.organizationMembers || 0}
@@ -167,7 +168,7 @@ export default function AdminUsersPage() {
     []
   );
 
-  const actions: TableAction<AdminUser>[] = [
+  const getActions = (): TableAction<AdminUser>[] => [
     {
       label: "Edit",
       icon: "edit",
@@ -200,7 +201,7 @@ export default function AdminUsersPage() {
           columns={columns}
           data={users}
           isLoading={isLoading}
-          actions={actions}
+          actions={getActions}
           onSearchChange={setSearchQuery}
           searchPlaceholder="Search users..."
           currentPage={currentPage}
@@ -233,7 +234,7 @@ export default function AdminUsersPage() {
             </label>
             <Select
               value={editRole}
-              onChange={(value) => setEditRole(value as string)}
+              onValueChange={(value) => setEditRole(value as string)}
               options={ROLE_OPTIONS}
             />
           </div>

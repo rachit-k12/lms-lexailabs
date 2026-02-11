@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Button, Text, Badge } from "@/components";
 import { usePaymentStatus, useInitiatePayment } from "@/lib/hooks";
 import { useAuth } from "@/lib/contexts/auth-context";
@@ -70,14 +71,15 @@ export function PaymentButton({
       return null;
     }
     return (
-      <Button
-        variant="primary"
-        size={size}
-        href="/login"
-        className={className}
-      >
-        Login to Get Premium
-      </Button>
+      <Link href="/login">
+        <Button
+          variant="primary"
+          size={size}
+          className={className}
+        >
+          Login to Get Premium
+        </Button>
+      </Link>
     );
   }
 
@@ -86,14 +88,14 @@ export function PaymentButton({
     if (variant === "badge") {
       if (status.accessType === "premium") {
         return (
-          <Badge variant="success" className={className}>
+          <Badge variant="green">
             Premium Active
           </Badge>
         );
       }
       if (status.accessType === "institution") {
         return (
-          <Badge variant="info" className={className}>
+          <Badge variant="indigo">
             {status.organization || "Institution Access"}
           </Badge>
         );

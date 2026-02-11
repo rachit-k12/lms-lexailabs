@@ -19,7 +19,8 @@ import {
   uploadStudentCSV,
   getErrorMessage,
 } from "@/lib/api";
-import type { Organization, StudentRecord, TableColumn, TableAction } from "@/lib/api";
+import type { Organization, StudentRecord } from "@/lib/api";
+import type { TableColumn, TableAction } from "@/components";
 import { toast } from "@/components";
 
 interface OrganizationStudentsPageProps {
@@ -145,7 +146,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
       {
         id: "batch",
         header: "Batch",
-        accessorKey: "batch.name",
+        accessorFn: (row) => row.batch?.name,
         cell: ({ row }) => (
           <Text variant="body-md">
             {row.original.batch?.name || "-"}
@@ -159,7 +160,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
         cell: ({ row }) => (
           <Badge
             type="label"
-            variant={row.original.isClaimed ? "success" : "neutral"}
+            variant={row.original.isClaimed ? "green" : "default"}
             size="sm"
           >
             {row.original.isClaimed ? "Claimed" : "Unclaimed"}
@@ -169,7 +170,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
       {
         id: "claimedBy",
         header: "Claimed By",
-        accessorKey: "claimedBy.name",
+        accessorFn: (row) => row.claimedBy?.name,
         cell: ({ row }) => (
           <Text variant="body-md">
             {row.original.claimedBy?.name || "-"}
@@ -190,7 +191,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
     []
   );
 
-  const actions: TableAction<StudentRecord>[] = [
+  const getActions = (): TableAction<StudentRecord>[] => [
     {
       label: "Delete",
       icon: "trash-2",
@@ -198,7 +199,6 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
         setStudentToDelete(student);
         setDeleteDialogOpen(true);
       },
-      variant: "danger",
     },
   ];
 
@@ -262,7 +262,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
           columns={columns}
           data={students}
           isLoading={isLoading}
-          actions={actions}
+          actions={getActions}
           onSearchChange={setSearchQuery}
           searchPlaceholder="Search students..."
           currentPage={currentPage}
@@ -329,10 +329,12 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
           ) : (
             <>
               <FileUpload
-                value={uploadFile ? [uploadFile] : []}
-                onChange={(files) => setUploadFile(files[0] || null)}
-                accept=".csv"
+                selectedFile={uploadFile}
+                onFileSelect={(file) => setUploadFile(file)}
+                acceptedTypes={{ "text/csv": [".csv"] }}
                 maxFiles={1}
+                primaryText="Drag and drop a CSV file or"
+                secondaryText="CSV file with student data"
               />
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <Text variant="body-sm" className="font-medium mb-2">
@@ -357,7 +359,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
         title="Delete Student Record"
         description={`Are you sure you want to delete the record for "${studentToDelete?.name}"? This will not delete the user account if they have claimed the record.`}
         submitButtonText="Delete"
-        submitButtonVariant="danger"
+        submitButtonVariant="destructive"
         onSubmit={handleDeleteConfirm}
         isSubmitting={isDeleting}
         size="sm"

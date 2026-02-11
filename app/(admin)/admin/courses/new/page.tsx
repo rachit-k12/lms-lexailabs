@@ -165,7 +165,7 @@ export default function NewCoursePage() {
                 </label>
                 <Select
                   value={category}
-                  onChange={(value) => setCategory(value as string)}
+                  onValueChange={(value) => setCategory(value as string)}
                   options={CATEGORY_OPTIONS}
                 />
               </div>
@@ -176,7 +176,7 @@ export default function NewCoursePage() {
                 </label>
                 <Select
                   value={level}
-                  onChange={(value) => setLevel(value as string)}
+                  onValueChange={(value) => setLevel(value as string)}
                   options={LEVEL_OPTIONS}
                 />
               </div>

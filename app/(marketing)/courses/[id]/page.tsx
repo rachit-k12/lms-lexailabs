@@ -404,7 +404,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
     lessons: module.lessons.map((lesson) => ({
       id: lesson.id,
       title: lesson.title,
-      duration: lesson.videoDurationMinutes ? `${lesson.videoDurationMinutes} min` : undefined,
+      duration: lesson.videoDurationMinutes ? `${lesson.videoDurationMinutes} min` : "",
       type: lesson.type as "video" | "article" | "quiz",
       isPreview: lesson.isPreview,
     })),
@@ -527,7 +527,16 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
         avatar={instructor.avatar}
         credentials={instructor.credentials}
         bioPoints={instructor.bioPoints}
-        socials={instructor.socials}
+        socials={
+          instructor.socialLinks
+            ? Object.entries(instructor.socialLinks)
+                .filter(([, url]) => url)
+                .map(([platform, url]) => ({
+                  platform: platform as "linkedin" | "twitter" | "github",
+                  url: url!,
+                }))
+            : undefined
+        }
       />
 
       {/* CTA Section */}
