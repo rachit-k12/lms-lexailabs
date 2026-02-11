@@ -41,7 +41,7 @@ const iconVariants = cva("inline-flex shrink-0", {
       success: "text-tatva-positive-content",
       warning: "text-tatva-warning-content",
       danger: "text-tatva-danger-content",
-      inverse: "text-tatva-content-inverse",
+      inverse: "text-white",
     },
   },
   defaultVariants: {

@@ -20,7 +20,7 @@ import {
   getErrorMessage,
 } from "@/lib/api";
 import type { Organization, StudentRecord, TableColumn, TableAction } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 interface OrganizationStudentsPageProps {
   params: Promise<{ id: string }>;
@@ -77,7 +77,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
 
   const handleUpload = async () => {
     if (!uploadFile) {
-      toast.error("Please select a file");
+      toast.error({ title: "File required", description: "Please select a file to upload" });
       return;
     }
 
@@ -85,7 +85,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
     try {
       const result = await uploadStudentCSV(orgId, uploadFile);
       setUploadResult(result);
-      toast.success(`Processed ${result.stats.totalProcessed} students`);
+      toast.success({ title: "Upload Complete", description: `Processed ${result.stats.totalProcessed} students` });
 
       // Refresh the list
       const studentsData = await getInstitutionStudents(orgId, {
@@ -96,7 +96,7 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
       setTotalRows(studentsData.pagination.total);
       setCurrentPage(1);
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Upload Failed", description: getErrorMessage(err) });
     } finally {
       setIsUploading(false);
     }
@@ -110,9 +110,9 @@ export default function OrganizationStudentsPage({ params }: OrganizationStudent
       await deleteStudentRecord(orgId, studentToDelete.id);
       setStudents((prev) => prev.filter((s) => s.id !== studentToDelete.id));
       setTotalRows((prev) => prev - 1);
-      toast.success("Student record deleted");
+      toast.success({ title: "Student Deleted", description: "Student record has been removed" });
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Delete Failed", description: getErrorMessage(err) });
     } finally {
       setIsDeleting(false);
       setDeleteDialogOpen(false);

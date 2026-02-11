@@ -33,7 +33,7 @@ import type {
   CreateModuleRequest,
   CreateLessonRequest,
 } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 interface EditCoursePageProps {
   params: Promise<{ slug: string }>;
@@ -135,7 +135,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
         setPrerequisites(data.course.prerequisites || []);
         setIncludes(data.course.includes || []);
       } catch (err) {
-        toast.error(getErrorMessage(err));
+        toast.error({ title: "Failed to load course", description: getErrorMessage(err) });
         router.push("/admin/courses");
       } finally {
         setIsLoading(false);
@@ -166,9 +166,9 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
         prerequisites,
         includes,
       });
-      toast.success("Course updated successfully");
+      toast.success({ title: "Course Updated", description: "Changes have been saved successfully" });
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Update Failed", description: getErrorMessage(err) });
     } finally {
       setIsSaving(false);
     }
@@ -190,7 +190,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
 
   const handleSaveModule = async () => {
     if (!moduleTitle.trim()) {
-      toast.error("Module title is required");
+      toast.error({ title: "Validation Error", description: "Module title is required" });
       return;
     }
 
@@ -207,15 +207,15 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
         setModules((prev) =>
           prev.map((m) => (m.id === editingModule.id ? result.module : m))
         );
-        toast.success("Module updated successfully");
+        toast.success({ title: "Module Updated", description: "Module has been updated successfully" });
       } else {
         const result = await createModule(course!.id, moduleData);
         setModules((prev) => [...prev, result.module]);
-        toast.success("Module created successfully");
+        toast.success({ title: "Module Created", description: "Module has been created successfully" });
       }
       setModuleDialogOpen(false);
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Save Failed", description: getErrorMessage(err) });
     } finally {
       setIsSavingModule(false);
     }
@@ -250,7 +250,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
 
   const handleSaveLesson = async () => {
     if (!lessonTitle.trim()) {
-      toast.error("Lesson title is required");
+      toast.error({ title: "Validation Error", description: "Lesson title is required" });
       return;
     }
 
@@ -290,7 +290,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
               : m
           )
         );
-        toast.success("Lesson updated successfully");
+        toast.success({ title: "Lesson Updated", description: "Lesson has been updated successfully" });
       } else {
         const result = await createLesson(course!.id, lessonModuleId, lessonData);
         setModules((prev) =>
@@ -300,11 +300,11 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
               : m
           )
         );
-        toast.success("Lesson created successfully");
+        toast.success({ title: "Lesson Created", description: "Lesson has been created successfully" });
       }
       setLessonDialogOpen(false);
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Save Failed", description: getErrorMessage(err) });
     } finally {
       setIsSavingLesson(false);
     }
@@ -317,7 +317,7 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
       if (deleteType === "module" && deleteTarget) {
         await deleteModule(course!.id, deleteTarget.id);
         setModules((prev) => prev.filter((m) => m.id !== deleteTarget.id));
-        toast.success("Module deleted successfully");
+        toast.success({ title: "Module Deleted", description: "Module has been deleted successfully" });
       } else if (deleteType === "lesson" && deleteTarget && deleteModuleId) {
         await deleteLesson(course!.id, deleteModuleId, deleteTarget.id);
         setModules((prev) =>
@@ -327,10 +327,10 @@ export default function EditCoursePage({ params }: EditCoursePageProps) {
               : m
           )
         );
-        toast.success("Lesson deleted successfully");
+        toast.success({ title: "Lesson Deleted", description: "Lesson has been deleted successfully" });
       }
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Delete Failed", description: getErrorMessage(err) });
     } finally {
       setIsDeleting(false);
       setDeleteType(null);

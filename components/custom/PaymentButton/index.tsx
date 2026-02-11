@@ -122,7 +122,7 @@ export function PaymentButton({
 
     // Default button variant - show access status
     return (
-      <Button variant="secondary" size={size} disabled className={className}>
+      <Button variant="secondary" size={size} disabled >
         {status.accessType === "premium"
           ? "Premium Active"
           : `Via ${status.organization}`}
@@ -141,13 +141,14 @@ export function PaymentButton({
   // Show upgrade button
   if (variant === "badge") {
     return (
-      <Badge
-        variant="warning"
-        className={cn("cursor-pointer", className)}
+      <Button
+        variant="primary"
+        size={size}
         onClick={handleClick}
+        isLoading={paymentLoading}
       >
         Upgrade to Premium
-      </Badge>
+      </Button>
     );
   }
 
@@ -171,7 +172,7 @@ export function PaymentButton({
             variant="primary"
             size="md"
             onClick={handleClick}
-            loading={paymentLoading}
+            isLoading={paymentLoading}
           >
             {paymentLoading ? "Processing..." : "Get Premium"}
           </Button>
@@ -185,7 +186,7 @@ export function PaymentButton({
       variant="primary"
       size={size}
       onClick={handleClick}
-      loading={paymentLoading}
+      isLoading={paymentLoading}
       className={className}
     >
       {paymentLoading ? "Processing..." : label}

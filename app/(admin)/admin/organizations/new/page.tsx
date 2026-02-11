@@ -12,7 +12,7 @@ import {
   DatePicker,
 } from "@/components";
 import { createOrganization, getErrorMessage } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 export default function NewOrganizationPage() {
   const router = useRouter();
@@ -37,15 +37,15 @@ export default function NewOrganizationPage() {
 
   const handleSubmit = async () => {
     if (!name.trim()) {
-      toast.error("Name is required");
+      toast.error({ title: "Validation Error", description: "Name is required" });
       return;
     }
     if (!slug.trim()) {
-      toast.error("Slug is required");
+      toast.error({ title: "Validation Error", description: "Slug is required" });
       return;
     }
     if (emailDomains.length === 0) {
-      toast.error("At least one email domain is required");
+      toast.error({ title: "Validation Error", description: "At least one email domain is required" });
       return;
     }
 
@@ -58,10 +58,10 @@ export default function NewOrganizationPage() {
         contractStart: contractStart?.toISOString(),
         contractEnd: contractEnd?.toISOString(),
       });
-      toast.success("Organization created successfully");
+      toast.success({ title: "Organization Created", description: "The organization has been created successfully" });
       router.push(`/admin/organizations/${result.organization.id}`);
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Creation Failed", description: getErrorMessage(err) });
     } finally {
       setIsSubmitting(false);
     }

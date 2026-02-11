@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Text, Button, Table, Badge } from "@/components";
 import { getOrganizations, getErrorMessage } from "@/lib/api";
 import type { Organization, TableColumn, TableAction } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 export default function AdminOrganizationsPage() {
   const router = useRouter();

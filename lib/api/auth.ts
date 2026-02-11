@@ -1,6 +1,6 @@
 import apiClient from "./client";
 import type {
-  AuthResponse,
+  LoginResponse,
   User,
   MembershipInfo,
   RegisterRequest,
@@ -23,8 +23,9 @@ export async function register(data: RegisterRequest): Promise<{ success: boolea
 
 /**
  * Login with email and password
+ * Sets httpOnly cookies (access_token and refresh_token)
  */
-export async function login(data: LoginRequest): Promise<AuthResponse> {
+export async function login(data: LoginRequest): Promise<LoginResponse> {
   const response = await apiClient.post(`${AUTH_BASE}/login`, data);
   return response.data;
 }

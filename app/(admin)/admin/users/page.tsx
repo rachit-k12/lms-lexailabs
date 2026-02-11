@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Text, Table, Badge, Dialog, Select, Switch } from "@/components";
+import { Text, Table, Badge, Dialog, Select, Switch, toast } from "@/components";
 import { getUsers, updateUser, getErrorMessage } from "@/lib/api";
 import type { AdminUser, TableColumn, TableAction } from "@/lib/api";
-import { toast } from "sonner";
 
 const ROLE_OPTIONS = [
   { value: "STUDENT", label: "Student" },
@@ -76,10 +75,10 @@ export default function AdminUsersPage() {
       setUsers((prev) =>
         prev.map((u) => (u.id === editingUser.id ? result.user : u))
       );
-      toast.success("User updated successfully");
+      toast.success({ title: "User Updated", description: "User has been updated successfully" });
       setEditDialogOpen(false);
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Update Failed", description: getErrorMessage(err) });
     } finally {
       setIsSaving(false);
     }

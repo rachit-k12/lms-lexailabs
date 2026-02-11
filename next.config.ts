@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.lexai.com",
       },
+      {
+        protocol: "https",
+        hostname: "loudicon.in",
+      },
+      {
+        protocol: "https",
+        hostname: "miro.medium.com",
+      },
     ],
   },
   // Proxy API requests to backend to avoid CORS/cookie issues with HTTP

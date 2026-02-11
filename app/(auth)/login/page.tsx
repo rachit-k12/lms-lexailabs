@@ -4,10 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { Text, Button } from "@/components";
+import { Text, Button, toast } from "@/components";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { getGoogleLoginUrl, getErrorMessage } from "@/lib/api";
-import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -29,11 +28,11 @@ export default function LoginPage() {
 
     try {
       await login({ email, password });
-      toast.success("Welcome back!");
+      toast.success({ title: "Welcome back!", description: "You have been signed in successfully" });
     } catch (err) {
       const message = getErrorMessage(err);
       setError(message);
-      toast.error(message);
+      toast.error({ title: "Sign in failed", description: message });
     } finally {
       setIsLoading(false);
     }

@@ -11,11 +11,12 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout, isLoading } = useAuth();
+  const { user, isAuthenticated, logout, isLoading, hasInstitutionalAccess } = useAuth();
 
   const navItems = [
     { label: "Courses", href: "/courses", isActive: pathname.startsWith("/courses") },
-    { label: "My Learning", href: "/my-learning", isActive: pathname.startsWith("/my-learning") },
+    ...(isAuthenticated ? [{ label: "My Learning", href: "/my-learning", isActive: pathname.startsWith("/my-learning") }] : []),
+    { label: "About", href: "/about", isActive: pathname === "/about" },
   ];
 
   // Show loading state while checking auth
@@ -38,6 +39,7 @@ export default function DashboardLayout({
             email: user.email,
             avatar: user.image || undefined,
           } : undefined}
+          isPremium={hasInstitutionalAccess}
           onGetStarted={() => router.push("/signup")}
           onLogin={() => router.push("/login")}
           onLogout={logout}

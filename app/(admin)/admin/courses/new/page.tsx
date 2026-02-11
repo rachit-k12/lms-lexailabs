@@ -15,7 +15,7 @@ import {
 } from "@/components";
 import { createCourse, getErrorMessage } from "@/lib/api";
 import type { CreateCourseRequest } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 const CATEGORY_OPTIONS = [
   { value: "engineering", label: "Engineering" },
@@ -62,11 +62,11 @@ export default function NewCoursePage() {
 
   const handleSubmit = async () => {
     if (!title.trim()) {
-      toast.error("Title is required");
+      toast.error({ title: "Validation Error", description: "Title is required" });
       return;
     }
     if (!slug.trim()) {
-      toast.error("Slug is required");
+      toast.error({ title: "Validation Error", description: "Slug is required" });
       return;
     }
 
@@ -92,10 +92,10 @@ export default function NewCoursePage() {
       };
 
       const result = await createCourse(courseData);
-      toast.success("Course created successfully");
+      toast.success({ title: "Course Created", description: "The course has been created successfully" });
       router.push(`/admin/courses/${result.course.slug}/edit`);
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Creation Failed", description: getErrorMessage(err) });
     } finally {
       setIsSubmitting(false);
     }

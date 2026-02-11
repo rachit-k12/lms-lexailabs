@@ -17,7 +17,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-tatva-background-black text-tatva-content-inverse hover:bg-tatva-background-black-hover focus-visible:ring-tatva-content-tertiary data-[state=open]:bg-tatva-background-black-hover",
+          "bg-black text-white hover:bg-gray-800 focus-visible:ring-gray-500 data-[state=open]:bg-gray-800",
         secondary:
           "bg-tatva-background-tertiary text-tatva-content-primary hover:bg-tatva-background-tertiary-hover focus-visible:ring-tatva-border-tertiary data-[state=open]:bg-tatva-background-tertiary-hover",
         destructive:
@@ -101,6 +101,8 @@ interface ButtonProps
   tooltip?: React.ReactNode;
   /** Button type - defaults to "button" */
   type?: "button" | "submit" | "reset";
+  /** Additional CSS class names */
+  className?: string;
 }
 
 // ============================================================================
@@ -120,6 +122,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       onClick,
       tooltip,
       type = "button",
+      className,
       ...props
     },
     ref
@@ -222,7 +225,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           isIconOnly ? iconOnlySizeMap[size ?? "md"] : "",
           isLoading ? "cursor-not-allowed opacity-70" : "",
           isLoading && children ? "relative" : "",
-          props.disabled ? "cursor-not-allowed opacity-50" : ""
+          props.disabled ? "cursor-not-allowed opacity-50" : "",
+          className
         )}
         ref={ref}
         disabled={isDisabled}

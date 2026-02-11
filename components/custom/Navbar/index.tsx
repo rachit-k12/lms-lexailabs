@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Text, Button, Avatar, Menu } from "@/components";
+import { Text, Button, Avatar, Menu, Badge } from "@/components";
 import { cn } from "@/lib/utils";
 
 // ============================================================================
@@ -30,6 +30,8 @@ export interface NavbarProps {
     email: string;
     avatar?: string;
   };
+  /** Whether user has premium access */
+  isPremium?: boolean;
   /** Handler for Get Started button */
   onGetStarted?: () => void;
   /** Handler for Login button */
@@ -60,6 +62,7 @@ export function Navbar({
   navItems = defaultNavItems,
   isLoggedIn = false,
   user,
+  isPremium = false,
   onGetStarted,
   onLogin,
   onLogout,
@@ -119,20 +122,18 @@ export function Navbar({
         {isLoggedIn && user ? (
           /* Logged In State */
           <div className="flex items-center gap-tatva-4">
-            <Link href="/my-learning">
-              <Button variant="ghost" size="md">
-                My Learning
-              </Button>
-            </Link>
+            {/* Premium Badge */}
+            {isPremium && (
+              <Badge type="label" variant="orange" size="sm">
+                Premium
+              </Badge>
+            )}
             <Menu
               options={[
-                { label: "Dashboard", icon: "home", onClick: () => {} },
-                { label: "My Courses", icon: "audio-book", onClick: () => {} },
-                { label: "Settings", icon: "settings", onClick: () => {} },
-                { label: "", isSeparator: true },
                 { label: "Logout", icon: "logout", onClick: onLogout },
               ]}
               align="end"
+              width="sm"
             >
               <button className="flex items-center gap-tatva-3 rounded-tatva-full p-tatva-2 transition-colors hover:bg-tatva-background-secondary">
                 <Avatar

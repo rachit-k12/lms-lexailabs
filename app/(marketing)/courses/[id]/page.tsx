@@ -18,7 +18,7 @@ import { enrollInCourse } from "@/lib/api/user";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { usePaymentStatus } from "@/lib/hooks";
 import { instructor } from "@/lib/data";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 // ============================================================================
 // Subscription CTA Card
@@ -106,7 +106,7 @@ function SubscriptionCard({
             variant="button"
             size="lg"
             onPaymentSuccess={onPaymentSuccess}
-            onPaymentError={(error) => toast.error(error)}
+            onPaymentError={(error) => toast.error({ title: "Payment Failed", description: error })}
             className="w-full"
           />
         </div>
@@ -344,19 +344,19 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
     setIsEnrolling(true);
     try {
       await enrollInCourse(slug);
-      toast.success("Enrolled successfully!");
+      toast.success({ title: "Enrolled successfully!", description: "You can now start learning this course" });
       // Refresh course data to get updated hasAccess
       const data = await getCourseBySlug(slug);
       setCourseData(data);
     } catch (err) {
       const message = getErrorMessage(err);
       if (message.includes("Already enrolled")) {
-        toast.info("You're already enrolled in this course");
+        toast.info({ title: "Already enrolled", description: "You're already enrolled in this course" });
       } else if (message.includes("Payment required")) {
         // User needs to pay - this shouldn't happen if UI is correct
-        toast.error("Premium access required. Please upgrade to continue.");
+        toast.error({ title: "Premium Required", description: "Please upgrade to continue learning" });
       } else {
-        toast.error(message);
+        toast.error({ title: "Enrollment Failed", description: message });
       }
     } finally {
       setIsEnrolling(false);
@@ -364,7 +364,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
   };
 
   const handlePaymentSuccess = async () => {
-    toast.success("Payment successful! You now have premium access.");
+    toast.success({ title: "Payment Successful!", description: "You now have premium access to all courses" });
     await refetchPayment();
     await fetchCourse();
   };

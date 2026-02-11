@@ -4,10 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Text, Button } from "@/components";
+import { Text, Button, toast } from "@/components";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { getGoogleLoginUrl, getErrorMessage } from "@/lib/api";
-import { toast } from "sonner";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -38,11 +37,11 @@ export default function SignupPage() {
         password: formData.password,
       });
       setSuccess(true);
-      toast.success(response.message || "Account created! Please check your email to verify.");
+      toast.success({ title: "Account created!", description: response.message || "Please check your email to verify your account" });
     } catch (err) {
       const message = getErrorMessage(err);
       setError(message);
-      toast.error(message);
+      toast.error({ title: "Sign up failed", description: message });
     } finally {
       setIsLoading(false);
     }

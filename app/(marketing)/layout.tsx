@@ -11,11 +11,12 @@ export default function MarketingLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, hasInstitutionalAccess } = useAuth();
   const isHomePage = pathname === "/";
 
   const navItems = [
     { label: "Courses", href: "/courses", isActive: pathname.startsWith("/courses") },
+    ...(isAuthenticated ? [{ label: "My Learning", href: "/my-learning", isActive: pathname.startsWith("/my-learning") }] : []),
     { label: "About", href: "/about", isActive: pathname === "/about" },
   ];
 
@@ -33,6 +34,7 @@ export default function MarketingLayout({
                 email: user.email,
                 avatar: user.image || undefined,
               } : undefined}
+              isPremium={hasInstitutionalAccess}
               onGetStarted={() => router.push("/signup")}
               onLogin={() => router.push("/login")}
               onLogout={logout}
@@ -53,6 +55,7 @@ export default function MarketingLayout({
                 email: user.email,
                 avatar: user.image || undefined,
               } : undefined}
+              isPremium={hasInstitutionalAccess}
               onGetStarted={() => router.push("/signup")}
               onLogin={() => router.push("/login")}
               onLogout={logout}

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Text, Button, Badge, PaymentButton } from "@/components";
+import { useRouter } from "next/navigation";
+import { Text, Button, Badge, PaymentButton, CourseCard } from "@/components";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { usePaymentStatus } from "@/lib/hooks";
 import { getEnrollments, getErrorMessage, type EnrollmentWithCourse } from "@/lib/api";
@@ -12,6 +12,7 @@ type TabType = "all" | "in-progress" | "completed";
 
 export default function MyLearningPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const { status: paymentStatus, loading: paymentLoading, refetch: refetchPayment } = usePaymentStatus();
   const [enrollments, setEnrollments] = useState<EnrollmentWithCourse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -202,110 +203,18 @@ export default function MyLearningPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredEnrollments.map((enrollment) => (
-            <EnrollmentCard key={enrollment.courseId} enrollment={enrollment} />
+            <CourseCard
+              key={enrollment.courseId}
+              title={enrollment.title}
+              description={enrollment.description || `${enrollment.completedLessons} / ${enrollment.totalLessons} lessons`}
+              image={enrollment.thumbnail}
+              badge={enrollment.category === "engineering" ? "Engineering" : "Non-Engineering"}
+              progress={enrollment.progressPercentage}
+              onStartLearning={() => router.push(`/courses/${enrollment.slug}`)}
+            />
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function EnrollmentCard({ enrollment }: { enrollment: EnrollmentWithCourse }) {
-  const statusColors = {
-    "not-started": "bg-gray-100 text-gray-600",
-    "in-progress": "bg-lms-primary-50 text-lms-primary-700",
-    completed: "bg-green-50 text-green-700",
-  };
-
-  const statusLabels = {
-    "not-started": "Not Started",
-    "in-progress": "In Progress",
-    completed: "Completed",
-  };
-
-  const buttonLabels = {
-    "not-started": "Start Learning",
-    "in-progress": "Continue Learning",
-    completed: "Review Course",
-  };
-
-  return (
-    <div className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-all hover:border-gray-300">
-      {/* Thumbnail */}
-      <div className="relative aspect-video overflow-hidden bg-gray-100">
-        {enrollment.thumbnail ? (
-          <Image
-            src={enrollment.thumbnail}
-            alt={enrollment.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-gradient-to-br from-lms-primary-100 to-lms-primary-200">
-            <Text variant="heading-md" tone="secondary">
-              {enrollment.title.charAt(0)}
-            </Text>
-          </div>
-        )}
-
-        {/* Status Badge */}
-        <div className="absolute right-3 top-3">
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
-              statusColors[enrollment.status]
-            }`}
-          >
-            {statusLabels[enrollment.status]}
-          </span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-5">
-        {/* Category & Level */}
-        <div className="mb-2 flex items-center gap-2">
-          <Badge type="label" variant="default" size="sm">
-            {enrollment.category === "engineering" ? "Engineering" : "Non-Engineering"}
-          </Badge>
-          <Badge type="label" variant="neutral" size="sm">
-            {enrollment.level}
-          </Badge>
-        </div>
-
-        {/* Title */}
-        <Text variant="heading-xs" className="mb-3 line-clamp-2">
-          {enrollment.title}
-        </Text>
-
-        {/* Progress Bar */}
-        <div className="mb-4">
-          <div className="mb-1 flex items-center justify-between">
-            <Text variant="body-xs" tone="secondary">
-              {enrollment.completedLessons} / {enrollment.totalLessons} lessons
-            </Text>
-            <Text variant="body-xs" tone="secondary">
-              {enrollment.progressPercentage}%
-            </Text>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-            <div
-              className={`h-full rounded-full transition-all ${
-                enrollment.status === "completed"
-                  ? "bg-green-500"
-                  : "bg-lms-primary-500"
-              }`}
-              style={{ width: `${enrollment.progressPercentage}%` }}
-            />
-          </div>
-        </div>
-
-        {/* CTA Button */}
-        <Link href={`/learn/${enrollment.slug}`}>
-          <Button variant="secondary" width="full" size="md">
-            {buttonLabels[enrollment.status]}
-          </Button>
-        </Link>
-      </div>
     </div>
   );
 }

@@ -19,7 +19,7 @@ import {
   getErrorMessage,
 } from "@/lib/api";
 import type { Organization, CourseListItem } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 interface CourseAccessPageProps {
   params: Promise<{ id: string }>;
@@ -108,7 +108,7 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
 
   const handleAddAccess = async () => {
     if (!selectedCourseId) {
-      toast.error("Please select a course");
+      toast.error({ title: "Selection required", description: "Please select a course" });
       return;
     }
 
@@ -118,7 +118,7 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
         courseId: selectedCourseId,
         batchId: selectedBatchId || undefined,
       });
-      toast.success("Course access granted");
+      toast.success({ title: "Access Granted", description: "Course access has been granted successfully" });
 
       // Refresh the access list
       const accessData = await getInstitutionCourses(orgId);
@@ -151,7 +151,7 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
       setSelectedCourseId("");
       setSelectedBatchId("");
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Failed to grant access", description: getErrorMessage(err) });
     } finally {
       setIsAdding(false);
     }
@@ -170,9 +170,9 @@ export default function OrganizationCoursesPage({ params }: CourseAccessPageProp
       setCourseAccess((prev) =>
         prev.filter((a) => a.id !== accessToRemove.id)
       );
-      toast.success("Course access removed");
+      toast.success({ title: "Access Removed", description: "Course access has been removed" });
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Failed to remove access", description: getErrorMessage(err) });
     } finally {
       setIsRemoving(false);
       setRemoveDialogOpen(false);

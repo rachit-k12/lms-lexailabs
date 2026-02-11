@@ -40,6 +40,12 @@ export interface AuthResponse {
   memberships: MembershipInfo[];
 }
 
+export interface LoginResponse {
+  success: boolean;
+  requiresInstitutionVerification?: boolean;
+  organizationSlug?: string;
+}
+
 export interface RegisterRequest {
   name: string;
   email: string;

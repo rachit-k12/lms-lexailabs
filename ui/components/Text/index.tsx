@@ -32,7 +32,7 @@ const textVariants = cva("cursor-[inherit]", {
       secondary: "text-tatva-content-secondary",
       tertiary: "text-tatva-content-tertiary",
       quaternary: "text-tatva-content-quaternary",
-      inverse: "text-tatva-content-inverse",
+      inverse: "text-white",
       // Brand colors
       brand: "text-tatva-brand-content-primary",
       "brand-secondary": "text-tatva-brand-content-secondary",

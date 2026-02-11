@@ -22,7 +22,7 @@ import {
   getErrorMessage,
 } from "@/lib/api";
 import type { Organization } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/components";
 
 interface OrganizationDetailPageProps {
   params: Promise<{ id: string }>;
@@ -69,7 +69,7 @@ export default function OrganizationDetailPage({ params }: OrganizationDetailPag
           setContractEnd(new Date(data.organization.contractEnd));
         }
       } catch (err) {
-        toast.error(getErrorMessage(err));
+        toast.error({ title: "Failed to load organization", description: getErrorMessage(err) });
         router.push("/admin/organizations");
       } finally {
         setIsLoading(false);
@@ -91,9 +91,9 @@ export default function OrganizationDetailPage({ params }: OrganizationDetailPag
         contractEnd: contractEnd?.toISOString(),
       });
       setOrganization(result.organization);
-      toast.success("Organization updated successfully");
+      toast.success({ title: "Organization Updated", description: "Changes have been saved successfully" });
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Update Failed", description: getErrorMessage(err) });
     } finally {
       setIsSaving(false);
     }
@@ -101,7 +101,7 @@ export default function OrganizationDetailPage({ params }: OrganizationDetailPag
 
   const handleAddAdmin = async () => {
     if (!adminName.trim() || !adminEmail.trim()) {
-      toast.error("Name and email are required");
+      toast.error({ title: "Validation Error", description: "Name and email are required" });
       return;
     }
 
@@ -112,13 +112,13 @@ export default function OrganizationDetailPage({ params }: OrganizationDetailPag
         email: adminEmail,
         password: adminPassword || undefined,
       });
-      toast.success("Admin added successfully");
+      toast.success({ title: "Admin Added", description: "The admin has been added successfully" });
       setAddAdminOpen(false);
       setAdminName("");
       setAdminEmail("");
       setAdminPassword("");
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Failed to add admin", description: getErrorMessage(err) });
     } finally {
       setIsAddingAdmin(false);
     }

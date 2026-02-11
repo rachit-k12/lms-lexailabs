@@ -21,7 +21,7 @@ import {
 import { updateLessonProgress } from "@/lib/api/courses";
 import { useAuth } from "@/lib/contexts/auth-context";
 import { usePaymentStatus } from "@/lib/hooks";
-import { toast } from "sonner";
+import { toast } from "@/components";
 import type { TocItem } from "@/components";
 
 // ============================================================================
@@ -129,7 +129,7 @@ export default function LearningView({ params }: LearningViewProps) {
   const [isMarkingComplete, setIsMarkingComplete] = useState(false);
 
   const handlePaymentSuccess = async () => {
-    toast.success("Payment successful! You now have premium access.");
+    toast.success({ title: "Payment Successful!", description: "You now have premium access to all courses" });
     await refetchPayment();
     // Retry fetching the lesson
     setError(null);
@@ -221,7 +221,7 @@ export default function LearningView({ params }: LearningViewProps) {
 
   const handleMarkComplete = async () => {
     if (!isAuthenticated) {
-      toast.error("Please sign in to track your progress");
+      toast.error({ title: "Sign in required", description: "Please sign in to track your progress" });
       return;
     }
 
@@ -232,10 +232,10 @@ export default function LearningView({ params }: LearningViewProps) {
       if (!isCurrentlyCompleted) {
         await updateLessonProgress(courseId, lessonId, { completed: true });
         setCompletedLessons((prev) => new Set([...prev, lessonId]));
-        toast.success("Lesson marked as complete!");
+        toast.success({ title: "Lesson Complete!", description: "Great progress! Keep it up" });
       }
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Failed to update progress", description: getErrorMessage(err) });
     } finally {
       setIsMarkingComplete(false);
     }

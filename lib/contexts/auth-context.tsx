@@ -84,12 +84,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check if user is institution admin
   const isInstitutionAdmin =
     state.user?.role === "INSTITUTION_ADMIN" ||
-    state.memberships.some((m) => m.role === "ADMIN" && m.isVerified);
+    (state.memberships?.some((m) => m.role === "ADMIN" && m.isVerified) ?? false);
 
   // Check if user has institutional access
-  const hasInstitutionalAccess = state.memberships.some(
+  const hasInstitutionalAccess = state.memberships?.some(
     (m) => m.isVerified
-  );
+  ) ?? false;
 
   // Fetch current user
   const refreshUser = useCallback(async () => {
@@ -97,7 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { user, memberships } = await getCurrentUser();
       setState({
         user,
-        memberships,
+        memberships: memberships ?? [],
         isLoading: false,
         isAuthenticated: true,
       });
@@ -113,19 +113,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Login handler
   const login = async (data: LoginRequest) => {
-    const response = await loginApi(data);
+    // Login API sets httpOnly cookies but doesn't return user data
+    await loginApi(data);
+
+    // Fetch user data after login (cookies are now set)
+    const { user, memberships } = await getCurrentUser();
+
     setState({
-      user: response.user,
-      memberships: response.memberships,
+      user,
+      memberships: memberships ?? [],
       isLoading: false,
       isAuthenticated: true,
     });
 
-    // Redirect based on role
-    if (response.user.role === "PLATFORM_ADMIN") {
-      router.push("/admin");
+    // Redirect based on role - use hard navigation to ensure fresh state
+    if (user?.role === "PLATFORM_ADMIN") {
+      window.location.href = "/admin";
     } else {
-      router.push("/my-learning");
+      window.location.href = "/my-learning";
     }
   };
 

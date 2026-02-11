@@ -3,10 +3,9 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Text, Button, Table, Badge, Dialog } from "@/components";
+import { Text, Button, Table, Badge, Dialog, toast } from "@/components";
 import { getCourses, deleteCourse, getErrorMessage } from "@/lib/api";
 import type { CourseListItem, TableColumn, TableAction } from "@/lib/api";
-import { toast } from "sonner";
 
 export default function AdminCoursesPage() {
   const router = useRouter();
@@ -56,12 +55,12 @@ export default function AdminCoursesPage() {
     setIsDeleting(true);
     try {
       await deleteCourse(courseToDelete.id);
-      toast.success("Course deleted successfully");
+      toast.success({ title: "Course Deleted", description: "The course has been deleted successfully" });
       // Refresh the list
       setCourses((prev) => prev.filter((c) => c.id !== courseToDelete.id));
       setTotalRows((prev) => prev - 1);
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      toast.error({ title: "Delete Failed", description: getErrorMessage(err) });
     } finally {
       setIsDeleting(false);
       setDeleteDialogOpen(false);
